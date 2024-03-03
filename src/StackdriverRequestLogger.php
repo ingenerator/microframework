@@ -2,6 +2,7 @@
 
 namespace Ingenerator\MicroFramework;
 
+use Closure;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -21,7 +22,7 @@ class StackdriverRequestLogger implements RequestLogger
             $e = new InvalidArgumentException(
                 sprintf(
                     "Could not log request details - got a %s instead of a %s",
-                    get_debug_type($logger),
+                    $logger::class,
                     StackdriverApplicationLogger::class
                 )
             );
@@ -30,10 +31,20 @@ class StackdriverRequestLogger implements RequestLogger
             return;
         }
 
-        $elapsed_nanos = hrtime(true) - $start_hr_time;
-        $request_start_time = microtime(true) - ($elapsed_nanos / 1_000_000_000);
+        $elapsed_nanos = $this->getHrTime() - $start_hr_time;
+        $request_start_time = $this->getMicrotime() - ($elapsed_nanos / 1_000_000_000);
 
         $logger->logRequest($_SERVER, $request_start_time);
+    }
+
+    protected function getHrTime(): int|float
+    {
+        return hrtime(true);
+    }
+
+    protected function getMicrotime(): float
+    {
+        return microtime(true);
     }
 
 }
