@@ -1,0 +1,40 @@
+{
+  "name": "ingenerator/microframework",
+  "description": "Extremely lightweight server framework for Cloud Run / Lambda etc",
+  "homepage": "https://github.com/ingenerator/microframework",
+  "type": "library",
+  "require": {
+    "php": "~8.2.0",
+    "ingenerator/php-utils": "^2.0",
+    "guzzlehttp/psr7": "^2.6"
+  },
+  "require-dev": {
+    "fig/log-test": "^1.1",
+    "phpunit/phpunit": "^9.6"
+  },
+  "license": "BSD-3-Clause",
+  "autoload": {
+    "psr-4": {
+      "Ingenerator\\MicroFramework\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "test\\": "test/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Andrew Coulton",
+      "email": "andrew@ingenerator.com"
+    }
+  ],
+  "support": {
+    "source": "https://github.com/ingenerator/microframework",
+    "issues": "https://github.com/ingenerator/microframework/issues"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}
