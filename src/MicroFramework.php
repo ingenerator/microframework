@@ -164,8 +164,11 @@ class MicroFramework
 
     private function renderErrorResponse(): void
     {
-        http_response_code(500);
-        header('Content-Type: text/plain');
+        if ( ! headers_sent()) {
+            // We can't send these if they've already been sent...
+            http_response_code(500);
+            header('Content-Type: text/plain');
+        }
         echo "Unexpected fatal error\n";
     }
 
