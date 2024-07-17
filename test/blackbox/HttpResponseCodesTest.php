@@ -9,7 +9,7 @@ class HttpResponseCodesTest extends BaseBlackboxTestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$handler_url = self::provisionDynamicHandler(
+        self::$handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
             fn (LoggerInterface $logger) => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
@@ -40,7 +40,7 @@ class HttpResponseCodesTest extends BaseBlackboxTestCase
 
     public function test_it_can_optionally_use_custom_status_codes_if_reason_phrase_provided()
     {
-        $handler_url = self::provisionDynamicHandler(
+        $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
             fn (LoggerInterface $logger) => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface

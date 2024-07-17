@@ -59,9 +59,8 @@ class BaseBlackboxTestCase extends TestCase
         );
     }
 
-    protected static function provisionDynamicHandler(string $handler_factory_implementation): string
+    protected static function provisionDynamicHandlerFactoryWithDefaultBootstrap(string $handler_factory_implementation): string
     {
-        $id = uniqid();
         $template = <<<'PHP'
             <?php
             use GuzzleHttp\Psr7\Response;
@@ -83,12 +82,17 @@ class BaseBlackboxTestCase extends TestCase
             );
             PHP;
 
-        $file_path = self::$dynamic_handler_path.'/'.$id;
-        self::$filesystem->mkdir($file_path);
-        self::$filesystem->dumpFile(
-            $file_path.'/index.php',
+        return self::provisionDynamicHandler(
             strtr($template, ['HANDLER_FACTORY_IMPLEMENTATION' => $handler_factory_implementation]),
         );
+    }
+
+    protected static function provisionDynamicHandler(string $code): string
+    {
+        $id = uniqid();
+        $file_path = self::$dynamic_handler_path.'/'.$id;
+        self::$filesystem->mkdir($file_path);
+        self::$filesystem->dumpFile($file_path.'/index.php', $code);
 
         return '/dynamic/'.$id.'/';
     }

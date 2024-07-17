@@ -11,7 +11,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$handler_url = self::provisionDynamicHandler(
+        self::$handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
             fn (LoggerInterface $logger) => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
@@ -166,7 +166,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
 
     public function test_it_can_detect_incoming_urls_when_rewriting()
     {
-        $handler_url = self::provisionDynamicHandler(
+        $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
             fn (LoggerInterface $logger) => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
