@@ -83,4 +83,22 @@ class HttpHeadersTest extends BaseBlackboxTestCase
         $this->assertSame($expected_headers, $all_headers);
     }
 
+    public function test_it_gives_error_on_unsupported_use_of_duplicate_output_headers()
+    {
+        // We can't support multiples for the same header because we can't reliably guess whether to pass
+        // replace => true or replace => false  into the `header()` call and it's more important that we
+        // replace existing e.g. content-type or other headers that have been set elsewhere in the code or
+        // by the PHP default runtime.
+        $response = $this->guzzle->post(
+            self::$handler_url,
+            [
+                RequestOptions::JSON => [
+                    'X-My-Custom' => ['Value1', 'Value 2'],
+                ],
+            ],
+        );
+
+        $this->assertResponseMatches(500, "Unexpected fatal error\n", $response);
+    }
+
 }
