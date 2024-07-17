@@ -44,6 +44,8 @@ services:
         target: /etc/apache2/sites-available/000-default.conf
     ports:
       - 80:80
+    volumes:
+      - ./implementation/htdocs/dynamic:/var/www/htdocs/dynamic
 
 configs:
   apache_config:
