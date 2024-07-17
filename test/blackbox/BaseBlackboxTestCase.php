@@ -89,7 +89,8 @@ class BaseBlackboxTestCase extends TestCase
 
     protected static function provisionDynamicHandler(string $code): string
     {
-        $id = uniqid();
+        $class_parts = explode('\\', static::class);
+        $id = array_pop($class_parts).'_'.sha1($code);
         $file_path = self::$dynamic_handler_path.'/'.$id;
         self::$filesystem->mkdir($file_path);
         self::$filesystem->dumpFile($file_path.'/index.php', $code);
