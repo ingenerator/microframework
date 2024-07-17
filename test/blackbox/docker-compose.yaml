@@ -5,7 +5,7 @@ services:
   test_runner:
     image: php:8.2-alpine
     environment:
-      - TEST_SUBJECT_BASE_URI=http://test_subject:8900
+      - TEST_SUBJECT_BASE_URI=http://test_subject
     working_dir: /workspace
     volumes:
       - ../../:/workspace
