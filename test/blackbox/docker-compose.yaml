@@ -1,0 +1,80 @@
+services:
+
+  # The test_runner is the outside of the black box, it has a mounted copy of the full
+  # codebase for running tests etc.
+  test_runner:
+    image: php:8.2-alpine
+    environment:
+      - TEST_SUBJECT_BASE_URI=http://test_subject:8900
+    working_dir: /workspace
+    volumes:
+      - ../../:/workspace
+    depends_on:
+      - test_subject
+    entrypoint: php
+    command:
+      - vendor/bin/phpunit
+      - --testsuite
+      - blackbox
+
+  # The test subject is the sample implementation we're testing
+  test_subject:
+    build:
+      context: ../../
+      dockerfile_inline: |
+        # First package the library in the current version, together with its dependencies
+        FROM composer:2 AS composer-builder
+        WORKDIR /workspace
+        COPY . /workspace
+        RUN  /workspace/test/blackbox/package-for-blackbox-tests.sh
+        
+        # Then build the packaged library into an HTTP server with our expected config and environment
+        # Note that we need to include composer to ensure that it will 
+        FROM php:8.2-apache
+        WORKDIR /var/www      
+        COPY --from=composer-builder /workspace/test/blackbox/implementation /var/www
+        COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+        RUN composer check-platform-reqs \
+            && a2enmod \
+              expires \
+              headers \
+              rewrite
+    configs:
+      - source: apache_config
+        target: /etc/apache2/sites-available/000-default.conf
+    ports:
+      - 80:80
+
+configs:
+  apache_config:
+    content: |
+      <VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/htdocs
+        ErrorLog /var/log/apache-error.log
+        CustomLog /var/log/apache-access.log combined
+      
+        <Directory /var/www/htdocs>
+          Options       FollowSymlinks
+          AllowOverride All
+          Require       all granted
+
+          # Installation directory
+          RewriteBase /
+
+          # Protect hidden files from being viewed
+          <Files .*>
+              Order Deny,Allow
+              Deny From All
+          </Files>
+
+          # Allow any files that exist to be displayed directly
+          # Note that directories will be rewritten to the application to handle as any other URL - so it is possible
+          # to explicitly request e.g. /my-directory/index.html (or .php) but not to request /my-directory/ and get an
+          # automatic index page unless this is registered as an app route.
+          RewriteCond %{REQUEST_FILENAME} !-f
+
+          # Rewrite all other URLs to index.php/URL
+          RewriteRule .* index.php/$0 [PT]
+        </Directory>
+      </VirtualHost>

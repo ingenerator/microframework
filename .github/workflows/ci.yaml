@@ -60,4 +60,6 @@ jobs:
     - name: Run integration tests
       run: |
         vendor/bin/phpunit --testsuite integration
-        
+
+    - name: Run blackbox tests
+      run: test/run-blackbox-tests.sh
