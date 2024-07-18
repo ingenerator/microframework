@@ -54,6 +54,9 @@ class BaseBlackboxTestCase extends TestCase
 
     protected function getTestSubjectLogEntriesDuringTest(): array
     {
+        // Wait a moment for logs to be written - they aren't always absolutely immediate
+        usleep(100_000);
+
         if (!is_file(self::$test_subject_logs_file)) {
             return [];
         }
