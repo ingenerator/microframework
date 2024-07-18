@@ -46,6 +46,25 @@ services:
       - 80:80
     volumes:
       - ./implementation/htdocs/dynamic:/var/www/htdocs/dynamic
+    depends_on:
+      - test_subject_log_receiver
+    logging:
+      driver: syslog
+      options:
+        syslog-address: 'tcp://127.0.0.1:9002'
+        syslog-format: 'rfc3164'
+
+  test_subject_log_receiver:
+    # No real need to use the php image - it's just running netcat as a simple TCP > file dump - but saves another pull
+    image: php:8.2-alpine
+    volumes:
+      - ./logging:/logging
+    entrypoint: /logging/log_receiver.sh
+    environment:
+      LOG_LISTEN_PORT: 9002
+      LOG_OUTPUT_FILE: /logging/test_subject.log
+    ports:
+      - 9002:9002
 
 configs:
   apache_config:

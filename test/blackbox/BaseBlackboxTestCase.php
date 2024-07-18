@@ -12,14 +12,17 @@ use Symfony\Component\Filesystem\Filesystem;
 class BaseBlackboxTestCase extends TestCase
 {
     protected static string $dynamic_handler_path = __DIR__.'/implementation/htdocs/dynamic';
+    protected static string $test_subject_logs_file = __DIR__.'/logging/test_subject.log';
+
     protected static Filesystem $filesystem;
+
+    protected Client $guzzle;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$filesystem ??= new Filesystem();
     }
-
 
     protected function setUp(): void
     {
@@ -29,9 +32,8 @@ class BaseBlackboxTestCase extends TestCase
             RequestOptions::HTTP_ERRORS => false,
             RequestOptions::ALLOW_REDIRECTS => false,
         ]);
+        $this->truncateTestSubjectLogs();
     }
-
-    protected Client $guzzle;
 
     private function getTestSubjectBaseUrl(): string
     {
@@ -40,6 +42,39 @@ class BaseBlackboxTestCase extends TestCase
         return $subject_url;
     }
 
+    protected function truncateTestSubjectLogs(): void
+    {
+        if (is_file(self::$test_subject_logs_file)) {
+            // NB, can't use filesystem->dump as we need to modify the content of the file *in place* because
+            // the log-receiving netcat is just redirected to the file and already has it open, so will keep
+            // writing to the original file handle even if we move or delete it.
+            $this->assertSame(0, file_put_contents(self::$test_subject_logs_file, ''));
+        }
+    }
+
+    protected function getTestSubjectLogEntriesDuringTest(): array
+    {
+        if (!is_file(self::$test_subject_logs_file)) {
+            return [];
+        }
+
+        // Each line in the file is in syslog RFC3164 format. The details of the message header not relevant to us, we
+        // are only using syslog format to be able to capture the underlying container STDOUT/STDERR in a docker compose
+        // environment. So we just split the lines on the end of the HEADER and return the CONTENT
+        return array_map(
+            self::extractSyslogRFC3164MessageBody(...),
+            file(self::$test_subject_logs_file, FILE_IGNORE_NEW_LINES),
+        );
+    }
+
+    private function extractSyslogRFC3164MessageBody(string $line): string
+    {
+        // https://datatracker.ietf.org/doc/html/rfc3164
+        if (!preg_match('/^<\d+>\w+ \d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
+            throw new \UnexpectedValueException('Unexpected log line format: `'.$line.'`');
+        }
+        return $matches[1];
+    }
 
     protected function assertResponseMatches(
         int               $expect_code,
