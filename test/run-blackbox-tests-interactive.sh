@@ -22,4 +22,6 @@ docker compose \
   test_runner
 
 echo "Cleaning up"
-docker compose down
+docker compose \
+ -f "$DIR/blackbox/docker-compose.yaml" \
+ down
