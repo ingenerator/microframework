@@ -68,6 +68,8 @@ services:
 
 configs:
   apache_config:
+    # Very basic apache config for the test_subject to provide a basic supported apache/PHP configuration and support
+    # URL rewriting to a dynamic index.php
     content: |
       <VirtualHost *:80>
         ServerAdmin webmaster@localhost
