@@ -1,8 +1,9 @@
 
 ### Unreleased
 
-### v1.0.1 (2024-07-17)
+### v1.0.1 (2024-07-22)
 
+* Add readme and license
 * Add some blackbox testing
 * Throw an exception instead of silently overwriting if response handlers attempt to send more than one value
   for the same header.
