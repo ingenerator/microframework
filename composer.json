@@ -11,7 +11,7 @@
   "require-dev": {
     "fig/log-test": "^1.1",
     "guzzlehttp/guzzle": "^7.8",
-    "phpunit/phpunit": "^9.6",
+    "phpunit/phpunit": "^10.5",
     "symfony/filesystem": "^7.1"
   },
   "license": "BSD-3-Clause",
