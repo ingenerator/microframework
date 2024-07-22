@@ -5,17 +5,17 @@ services:
   test_runner:
     image: php:8.2-alpine
     environment:
-      - TEST_SUBJECT_BASE_URI=http://test_subject
+    - TEST_SUBJECT_BASE_URI=http://test_subject
     working_dir: /workspace
     volumes:
-      - ../../:/workspace
+    - ../../:/workspace
     depends_on:
-      - test_subject
+    - test_subject
     entrypoint: php
     command:
-      - vendor/bin/phpunit
-      - --testsuite
-      - blackbox
+    - vendor/bin/phpunit
+    - --testsuite
+    - blackbox
 
   # The test subject is the sample implementation we're testing
   test_subject:
@@ -40,14 +40,14 @@ services:
               headers \
               rewrite
     configs:
-      - source: apache_config
-        target: /etc/apache2/sites-available/000-default.conf
+    - source: apache_config
+      target: /etc/apache2/sites-available/000-default.conf
     ports:
-      - 80:80
+    - 80:80
     volumes:
-      - ./implementation/htdocs/dynamic:/var/www/htdocs/dynamic
+    - ./implementation/htdocs/dynamic:/var/www/htdocs/dynamic
     depends_on:
-      - test_subject_log_receiver
+    - test_subject_log_receiver
     logging:
       driver: syslog
       options:
@@ -58,13 +58,13 @@ services:
     # No real need to use the php image - it's just running netcat as a simple TCP > file dump - but saves another pull
     image: php:8.2-alpine
     volumes:
-      - ./logging:/logging
+    - ./logging:/logging
     entrypoint: /logging/log_receiver.sh
     environment:
       LOG_LISTEN_PORT: 9002
       LOG_OUTPUT_FILE: /logging/test_subject.log
     ports:
-      - 9002:9002
+    - 9002:9002
 
 configs:
   apache_config:

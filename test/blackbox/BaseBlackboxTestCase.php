@@ -12,6 +12,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class BaseBlackboxTestCase extends TestCase
 {
     protected static string $dynamic_handler_path = __DIR__.'/implementation/htdocs/dynamic';
+
     protected static string $test_subject_logs_file = __DIR__.'/logging/test_subject.log';
 
     protected static Filesystem $filesystem;
@@ -39,6 +40,7 @@ class BaseBlackboxTestCase extends TestCase
     {
         $subject_url = getenv('TEST_SUBJECT_BASE_URI');
         Assert::assertNotEmpty($subject_url, 'Expect an environment variable TEST_SUBJECT_BASE_URI');
+
         return $subject_url;
     }
 
@@ -57,7 +59,7 @@ class BaseBlackboxTestCase extends TestCase
         // Wait a moment for logs to be written - they aren't always absolutely immediate
         usleep(100_000);
 
-        if (!is_file(self::$test_subject_logs_file)) {
+        if ( ! is_file(self::$test_subject_logs_file)) {
             return [];
         }
 
@@ -73,18 +75,18 @@ class BaseBlackboxTestCase extends TestCase
     private function extractSyslogRFC3164MessageBody(string $line): string
     {
         // https://datatracker.ietf.org/doc/html/rfc3164
-        if (!preg_match('/^<\d+>\w+ \d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
+        if ( ! preg_match('/^<\d+>\w+ \d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
             throw new \UnexpectedValueException('Unexpected log line format: `'.$line.'`');
         }
+
         return $matches[1];
     }
 
     protected function assertResponseMatches(
-        int               $expect_code,
-        string            $expect_body,
+        int $expect_code,
+        string $expect_body,
         ResponseInterface $response
-    ): void
-    {
+    ): void {
         $this->assertSame(
             [
                 'status' => $expect_code,
@@ -97,8 +99,8 @@ class BaseBlackboxTestCase extends TestCase
         );
     }
 
-    protected static function provisionDynamicHandlerFactoryWithDefaultBootstrap(string $handler_factory_implementation): string
-    {
+    protected static function provisionDynamicHandlerFactoryWithDefaultBootstrap(string $handler_factory_implementation
+    ): string {
         $template = <<<'PHP'
             <?php
             use GuzzleHttp\Psr7\Response;
