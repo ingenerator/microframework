@@ -17,7 +17,7 @@ echo "      until you re-build the containers (e.g. by exiting and re-running th
 docker compose \
   -f "$DIR/blackbox/docker-compose.yaml" \
   run \
-  --entrypoint /bin/ash \
+  --entrypoint /bin/bash \
   --rm \
   test_runner
 

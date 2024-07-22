@@ -3,7 +3,7 @@ services:
   # The test_runner is the outside of the black box, it has a mounted copy of the full
   # codebase for running tests etc.
   test_runner:
-    image: php:8.2-alpine
+    image: php:8.2-apache
     environment:
     - TEST_SUBJECT_BASE_URI=http://test_subject
     working_dir: /workspace
@@ -56,7 +56,7 @@ services:
 
   test_subject_log_receiver:
     # No real need to use the php image - it's just running netcat as a simple TCP > file dump - but saves another pull
-    image: php:8.2-alpine
+    image: alpine:latest
     volumes:
     - ./logging:/logging
     entrypoint: /logging/log_receiver.sh
