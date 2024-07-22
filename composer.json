@@ -6,11 +6,13 @@
   "require": {
     "php": "~8.2.0",
     "ingenerator/php-utils": "^2.0",
-    "guzzlehttp/psr7": "^2.6"
+    "guzzlehttp/psr7": "^2.7"
   },
   "require-dev": {
     "fig/log-test": "^1.1",
-    "phpunit/phpunit": "^9.6"
+    "guzzlehttp/guzzle": "^7.9.1",
+    "phpunit/phpunit": "^10.5.28",
+    "symfony/filesystem": "^7.1.2"
   },
   "license": "BSD-3-Clause",
   "autoload": {

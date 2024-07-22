@@ -139,10 +139,12 @@ class MicroFramework
         );
 
         foreach ($response->getHeaders() as $header => $header_values) {
-            foreach ($header_values as $header_value) {
-                header($header.': '.$header_value, true);
+            if (count($header_values) > 1) {
+                throw new \UnexpectedValueException('Cannot specify multiple values for the '.$header.' header');
             }
+            header($header.': '.array_shift($header_values), replace: true);
         }
+
         echo $response->getBody()->getContents();
     }
 
@@ -162,8 +164,11 @@ class MicroFramework
 
     private function renderErrorResponse(): void
     {
-        http_response_code(500);
-        header('Content-Type: text/plain');
+        if ( ! headers_sent()) {
+            // We can't send these if they've already been sent...
+            http_response_code(500);
+            header('Content-Type: text/plain');
+        }
         echo "Unexpected fatal error\n";
     }
 
