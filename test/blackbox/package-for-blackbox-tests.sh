@@ -3,10 +3,9 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-# This script runs *as part of building a test_subject docker container* to take the current
-# version of the library and package it up with the other dependencies ready for running HTTP
-# tests. It runs in a *composer* image, not our own, and is used as the first part of a
-# multi-stage build. See the docker-compose.yaml for how this fits together.
+# This script runs *within a `composer:2` image as the first step of a multi-stage build.
+# See the blackbox testing README.md and the docker-compose.yaml file to understand more
+# about why & how this works.
 
 # Configure directory paths
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

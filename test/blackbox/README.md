@@ -4,12 +4,19 @@ These black-box tests provide the majority of the package coverage, to make sure
 wired up and serving HTTP traffic. This is because most of what it does is parsing global state, setting headers,
 rendering output, etc which would be hard and brittle to test with unit or integration tests.
 
-The tests are run against the **built version of the package**. To do this, we use `git export` to build a distribution
-package, then use composer to install that with its dependencies inside a docker container running apache.
+The tests are run against the **built version of the package**. To do this, we:
+
+* Launch a docker build process using the `composer:2` image as the first build step (this provides composer and git,
+  which are both needded).
+* use `git archive HEAD` to build a distribution package from the most recent commit. This generates a tar exactly 
+  matching the download archive that github will produce for that commit - including that it respects `export-ignore`
+  and similar instructions in the .gitattributes.
+* Use composer to install that packaged tar, together with its dependencies, into a docker filesystem
+* Then copies the entire built project into a php:8.2-apache image which runs as the test_subject.
 
 Note that this means when working locally, changes to the application code **will not be picked up by the test_subject
 automatically**. To update the test_subject you will need to **commit your changes** (so that they are included in the
-`git export HEAD`) and then **exit and re-provision the blackbox testing stack**.
+`git archive HEAD`) and then **exit and re-provision the blackbox testing stack**.
 
 The blackbox tests run in a separate container, which has three couplings to the system under test:
 

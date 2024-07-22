@@ -13,7 +13,8 @@ docker compose \
 echo "Starting interactive blackbox test runner shell"
 echo "Hint: Run docker compose logs -f in another terminal to see what's happening"
 echo "Hint: Changes to tests are mounted live, but changes to application code *will not* apply"
-echo "      until you re-build the containers (e.g. by exiting and re-running this script)"
+echo "      until you re-build (e.g. by exiting, committing, & re-running this script)"
+
 docker compose \
   -f "$DIR/blackbox/docker-compose.yaml" \
   run \
