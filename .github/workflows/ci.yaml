@@ -10,21 +10,11 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     name: Run tests
-    strategy:
-      fail-fast: false
-      matrix:
-        php_version:
-        - '8.2'
-        dependencies:
-        - 'default'
-        include:
-        - php_version: '8.2'
-          dependencies: 'lowest'
     steps:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php_version }}
+        php-version: 8.2
         tools: composer:v2
 
     - name: Checkout
@@ -38,20 +28,12 @@ jobs:
     - uses: actions/cache@v2
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ matrix.dependencies }}-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-composer-${{ matrix.dependencies }}
+          ${{ runner.os }}-composer
 
     - name: Install composer dependencies
-      env:
-        DEPENDENCIES: ${{ matrix.dependencies }}
-      run: |
-        if [ $DEPENDENCIES == 'lowest' ]
-        then
-          composer update --prefer-lowest --no-interaction --no-progress
-        else
-          composer install --no-interaction --no-progress
-        fi
+      run: composer install --no-interaction --no-progress
 
     - name: Run unit tests
       run: |
