@@ -32,3 +32,4 @@ README  text eol=lf
 /test export-ignore
 /.github export-ignore
 /.editorconfig export-ignore
+/phpunit.xml export-ignore
