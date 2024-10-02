@@ -75,7 +75,7 @@ class BaseBlackboxTestCase extends TestCase
     private function extractSyslogRFC3164MessageBody(string $line): string
     {
         // https://datatracker.ietf.org/doc/html/rfc3164
-        if ( ! preg_match('/^<\d+>\w+ \d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
+        if ( ! preg_match('/^<\d+>\w+\s+\d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
             throw new \UnexpectedValueException('Unexpected log line format: `'.$line.'`');
         }
 
