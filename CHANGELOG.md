@@ -1,6 +1,10 @@
 
 ### Unreleased
 
+### v1.1.0 (2024-10-02)
+
+* Support PHP 8.3
+
 ### v1.0.1 (2024-07-22)
 
 * Add readme and license
