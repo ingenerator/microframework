@@ -1,6 +1,10 @@
 
 ### Unreleased
 
+### v1.2.0 (2025-07-23)
+
+* Require PHP 8.4
+
 ### v1.1.0 (2024-10-02)
 
 * Support PHP 8.3

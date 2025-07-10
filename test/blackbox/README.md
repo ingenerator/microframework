@@ -12,7 +12,7 @@ The tests are run against the **built version of the package**. To do this, we:
   matching the download archive that github will produce for that commit - including that it respects `export-ignore`
   and similar instructions in the .gitattributes.
 * Use composer to install that packaged tar, together with its dependencies, into a docker filesystem
-* Then copies the entire built project into a php:8.3-apache image which runs as the test_subject.
+* Then copies the entire built project into a php:8.4-apache image which runs as the test_subject.
 
 Note that this means when working locally, changes to the application code **will not be picked up by the test_subject
 automatically**. To update the test_subject you will need to **commit your changes** (so that they are included in the
