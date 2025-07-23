@@ -14,26 +14,16 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: 8.3
+        php-version: 8.4
         tools: composer:v2
 
     - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Get Composer Cache Directory
-      id: composer-cache
-      run: |
-        echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-    - uses: actions/cache@v2
+      uses: actions/checkout@v4
       with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-composer
+        show-progress: false
 
-    - name: Install composer dependencies
-      run: composer install --no-interaction --no-progress
+    - name: Composer install
+      uses: ingenerator/github-composite-actions/cached-composer-install@v1
 
     - name: Run unit tests
       run: |
