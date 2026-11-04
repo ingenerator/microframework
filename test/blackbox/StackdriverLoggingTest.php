@@ -199,7 +199,7 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
                     ],
                     'reportLocation' => [
                         'filePath' => '/var/www/vendor/ingenerator/microframework/src/MicroFramework.php',
-                        'lineNumber' => 153,
+                        'lineNumber' => 152,
                         'functionName' => 'Ingenerator\MicroFramework\MicroFramework->logUncaughtException',
                     ],
                 ],
@@ -211,21 +211,21 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php',
                     'line' => 17,
                     'trace' => <<<'TEXT'
-                        #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(82): MyHandler->handle()
+                        #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(81): MyHandler->handle()
                         #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php(21): Ingenerator\MicroFramework\MicroFramework->execute()
                         #2 {main}
                         TEXT,
                 ],
                 'logging.googleapis.com/sourceLocation' => [
                     'file' => '/var/www/vendor/ingenerator/microframework/src/MicroFramework.php',
-                    'line' => 153,
+                    'line' => 152,
                     'function' => 'Ingenerator\MicroFramework\MicroFramework->logUncaughtException',
                 ],
                 '@type' => 'type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent',
                 'stack_trace' => <<<'TEXT'
                     PHP Warning: RuntimeException: I broke in /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php:17
                     Stack trace:
-                    #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(82): MyHandler->handle()
+                    #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(81): MyHandler->handle()
                     #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php(21): Ingenerator\MicroFramework\MicroFramework->execute()
                     #2 {main}
                     TEXT,
