@@ -16,7 +16,6 @@ use UnexpectedValueException;
 
 use function date_default_timezone_set;
 use function error_reporting;
-use function get_class;
 use function header;
 use function headers_sent;
 use function ob_get_clean;
@@ -153,7 +152,7 @@ class MicroFramework
         $logger->emergency(
             sprintf(
                 'Uncaught %s: %s at %s:%s',
-                get_class($e),
+                $e::class,
                 $e->getMessage(),
                 $e->getFile(),
                 $e->getFile(),

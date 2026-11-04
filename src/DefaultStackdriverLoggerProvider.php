@@ -20,7 +20,7 @@ class DefaultStackdriverLoggerProvider implements LoggerProvider
     {
         if (!StackdriverApplicationLogger::isInitialised()) {
             StackdriverApplicationLogger::initialise(
-                fn () => new StackdriverApplicationLogger(
+                fn (): StackdriverApplicationLogger => new StackdriverApplicationLogger(
                     $this->log_destination,
                     ...$this->getMetadataProviders(),
                 )

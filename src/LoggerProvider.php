@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ingenerator\MicroFramework;
 
 use Psr\Log\LoggerInterface;
