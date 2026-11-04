@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace test\blackbox;
 
-class EnvironmentConfigurationTest extends BaseBlackboxTestCase
+final class EnvironmentConfigurationTest extends BaseBlackboxTestCase
 {
     public function testCanConfigureCustomTimezoneInBootstrap(): void
     {

@@ -6,7 +6,7 @@ namespace test\blackbox;
 
 use PHPUnit\Framework\Attributes\TestWith;
 
-class HttpResponseCodesTest extends BaseBlackboxTestCase
+final class HttpResponseCodesTest extends BaseBlackboxTestCase
 {
     private static string $handler_url;
 

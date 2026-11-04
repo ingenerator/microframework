@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\blackbox;
 
 use Ingenerator\PHPUtils\StringEncoding\JSON;
 
-class StackdriverLoggingTest extends BaseBlackboxTestCase
+final class StackdriverLoggingTest extends BaseBlackboxTestCase
 {
     // Note, these tests are necessarily verbose and fairly tightly coupled to the code structure, because I think for
     // a blackbox test we should be as explicit as we can be about the detail of the log messages that are written -
@@ -71,8 +73,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($request_log_msg['logging.googleapis.com/trace']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertIsNumeric($request_log_msg['context']['mem_mb']);
-        $this->assertSame(2.0, round((float) $request_log_msg['context']['mem_mb']));
+        $this->assertEqualsWithDelta(2.0, $request_log_msg['context']['mem_mb'], 0.5);
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(
@@ -177,8 +178,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($request_log_msg['httpRequest']['latency']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertIsNumeric($request_log_msg['context']['mem_mb']);
-        $this->assertSame(2.0, round((float) $request_log_msg['context']['mem_mb']));
+        $this->assertEqualsWithDelta(2.0, $request_log_msg['context']['mem_mb'], 0.5);
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(
@@ -338,8 +338,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($request_log_msg['httpRequest']['latency']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertIsNumeric($request_log_msg['context']['mem_mb']);
-        $this->assertSame(2.0, round((float) $request_log_msg['context']['mem_mb']));
+        $this->assertEqualsWithDelta(2.0, $request_log_msg['context']['mem_mb'], 0.5);
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(

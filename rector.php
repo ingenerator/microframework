@@ -16,5 +16,8 @@ return RectorConfig::configure()
         codeQuality: true,
         typeDeclarations: true,
         typeDeclarationDocblocks: true,
+        phpunitCodeQuality: true,
+        phpunitNarrowAsserts: true,
+        phpunitMockToStub: true,
     )
     ->withImportNames();

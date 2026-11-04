@@ -10,7 +10,7 @@ use Ingenerator\MicroFramework\StackdriverRequestLogger;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use PHPUnit\Framework\TestCase;
 
-class DefaultStackdriverLoggerProviderTest extends TestCase
+final class DefaultStackdriverLoggerProviderTest extends TestCase
 {
     public function testItIsInitialisableLoggerProvider(): void
     {

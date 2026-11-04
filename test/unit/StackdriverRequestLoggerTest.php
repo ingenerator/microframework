@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\unit;
 
 use Ingenerator\MicroFramework\RequestLogger;
 use Ingenerator\MicroFramework\StackdriverRequestLogger;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use Ingenerator\PHPUtils\Superglobals\ServerGlobal;
+use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\Test\TestLogger;
 use RuntimeException;
 
-class StackdriverRequestLoggerTest extends TestCase
+final class StackdriverRequestLoggerTest extends TestCase
 {
     public function testItIsInitialisableRequestLogger(): void
     {
@@ -27,23 +30,21 @@ class StackdriverRequestLoggerTest extends TestCase
     }
 
     /**
-     * @return array<string, array<string, float|int>>
+     * @return Iterator<string, array<string, float|int>>
      */
-    public static function provider_calculate_request_start(): array
+    public static function provider_calculate_request_start(): Iterator
     {
-        return [
-            '64-bit with int hrtime' => [
-                'hrtime_start' => 2993548241208,
-                'hrtime_now' => 2993548244583,
-                'microtime_now' => 1709456239.781800000,
-                'expect_start_time' => 1709456239.781796625,
-            ],
-            '32-bit with float hrtime (and longer latency)' => [
-                'hrtime_start' => 2992348244583.0,
-                'hrtime_now' => 2993548244583.0,
-                'microtime_now' => 1709456239.7818,
-                'expect_start_time' => 1709456238.5818,
-            ],
+        yield '64-bit with int hrtime' => [
+            'hrtime_start' => 2993548241208,
+            'hrtime_now' => 2993548244583,
+            'microtime_now' => 1709456239.781800000,
+            'expect_start_time' => 1709456239.781796625,
+        ];
+        yield '32-bit with float hrtime (and longer latency)' => [
+            'hrtime_start' => 2992348244583.0,
+            'hrtime_now' => 2993548244583.0,
+            'microtime_now' => 1709456239.7818,
+            'expect_start_time' => 1709456238.5818,
         ];
     }
 

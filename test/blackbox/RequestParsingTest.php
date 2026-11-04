@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * @phpstan-type TGuzzleRequestOptions array{form_params?: array<string, array<int|string>|scalar|null>, json?: mixed}
  */
-class RequestParsingTest extends BaseBlackboxTestCase
+final class RequestParsingTest extends BaseBlackboxTestCase
 {
     private static string $handler_url;
 

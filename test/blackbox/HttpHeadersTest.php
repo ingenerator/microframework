@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace test\blackbox;
 
 use GuzzleHttp\RequestOptions;
+use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class HttpHeadersTest extends BaseBlackboxTestCase
+final class HttpHeadersTest extends BaseBlackboxTestCase
 {
     private static string $handler_url;
 
@@ -28,42 +29,40 @@ class HttpHeadersTest extends BaseBlackboxTestCase
     }
 
     /**
-     * @return array<string, array{array<string,string>, array<string,list<string>>}>
+     * @return Iterator<string, array{array<string, string>, array<string, list<string>>}>
      */
-    public static function provider_headers(): array
+    public static function provider_headers(): Iterator
     {
-        return [
-            'no headers specified, just the defaults' => [
-                [],
-                [
-                    'Content-Length' => ['17'],
-                    'Content-Type' => ['text/html; charset=UTF-8'],
-                ],
+        yield 'no headers specified, just the defaults' => [
+            [],
+            [
+                'Content-Length' => ['17'],
+                'Content-Type' => ['text/html; charset=UTF-8'],
             ],
-            'custom content type' => [
-                ['Content-Type' => 'application/json'],
-                [
-                    'Content-Length' => ['17'],
-                    'Content-Type' => ['application/json'],
-                ],
+        ];
+        yield 'custom content type' => [
+            ['Content-Type' => 'application/json'],
+            [
+                'Content-Length' => ['17'],
+                'Content-Type' => ['application/json'],
             ],
-            'custom content type in different case' => [
-                ['content-type' => 'application/json'],
-                [
-                    'Content-Length' => ['17'],
-                    'Content-Type' => ['application/json'],
-                ],
+        ];
+        yield 'custom content type in different case' => [
+            ['content-type' => 'application/json'],
+            [
+                'Content-Length' => ['17'],
+                'Content-Type' => ['application/json'],
             ],
-            'custom headers' => [
-                [
-                    'Content-Type' => 'application/json',
-                    'X-My-Custom' => 'Value',
-                ],
-                [
-                    'Content-Length' => ['17'],
-                    'Content-Type' => ['application/json'],
-                    'X-My-Custom' => ['Value'],
-                ],
+        ];
+        yield 'custom headers' => [
+            [
+                'Content-Type' => 'application/json',
+                'X-My-Custom' => 'Value',
+            ],
+            [
+                'Content-Length' => ['17'],
+                'Content-Type' => ['application/json'],
+                'X-My-Custom' => ['Value'],
             ],
         ];
     }

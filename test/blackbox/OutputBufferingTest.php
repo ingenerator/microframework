@@ -6,7 +6,7 @@ namespace blackbox;
 
 use test\blackbox\BaseBlackboxTestCase;
 
-class OutputBufferingTest extends BaseBlackboxTestCase
+final class OutputBufferingTest extends BaseBlackboxTestCase
 {
     public function testItHandlesErrorEvenIfOutputBeganBeforeFramework(): void
     {

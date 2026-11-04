@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace test\blackbox;
 
+use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class ErrorHandlingTest extends BaseBlackboxTestCase
+final class ErrorHandlingTest extends BaseBlackboxTestCase
 {
     /**
-     * @return array<string, list<string>>
+     * @return Iterator<string, list<string>>
      */
-    public static function provider_error_handling(): array
+    public static function provider_error_handling(): Iterator
     {
-        return [
-            'exception in handler factory' => [
-                <<<'PHP'
+        yield 'exception in handler factory' => [
+            <<<'PHP'
                 fn () => throw new RuntimeException('No handler')
                 PHP,
-            ],
-            'error in handler factory' => [
-                <<<'PHP'
+        ];
+        yield 'error in handler factory' => [
+            <<<'PHP'
                 fn () => ['no'=> 'thing']['undefined']
                 PHP,
-            ],
-            'factory does not return a handler instance' => [
-                <<<'PHP'
+        ];
+        yield 'factory does not return a handler instance' => [
+            <<<'PHP'
                 fn (LoggerInterface $logger) => new class extends stdClass {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
@@ -33,14 +33,14 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
                     }
                 }
                 PHP,
-            ],
-            'factory references undefined class' => [
-                <<<'PHP'
+        ];
+        yield 'factory references undefined class' => [
+            <<<'PHP'
                 fn (LoggerInterface $logger) => new \My\Undefined\RequestHandlerClass()
                 PHP,
-            ],
-            'uncaught exception during handler' => [
-                <<<'PHP'
+        ];
+        yield 'uncaught exception during handler' => [
+            <<<'PHP'
                 fn (LoggerInterface $logger) => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
@@ -48,9 +48,9 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
                     }
                 }
                 PHP,
-            ],
-            'php error in handler' => [
-                <<<'PHP'
+        ];
+        yield 'php error in handler' => [
+            <<<'PHP'
                 fn (LoggerInterface $logger) => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
@@ -59,9 +59,9 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
                     }
                 }
                 PHP,
-            ],
-            'TypeError in handler' => [
-                <<<'PHP'
+        ];
+        yield 'TypeError in handler' => [
+            <<<'PHP'
                 fn (LoggerInterface $logger) => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
@@ -73,7 +73,6 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
                     }
                 }
                 PHP,
-            ],
         ];
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\unit;
 
 use DateTimeImmutable;
@@ -8,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use UnexpectedValueException;
 
-class FactoryFunctionTest extends TestCase
+final class FactoryFunctionTest extends TestCase
 {
     public function testItCallsFunctionAndReturnsResult(): void
     {

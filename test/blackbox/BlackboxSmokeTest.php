@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace test\blackbox;
 
-class BlackboxSmokeTest extends BaseBlackboxTestCase
+final class BlackboxSmokeTest extends BaseBlackboxTestCase
 {
     public function testTestSubjectRespondsFromDefaultHandler(): void
     {
