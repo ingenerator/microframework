@@ -12,6 +12,7 @@
   "require-dev": {
     "fig/log-test": "^1.1",
     "guzzlehttp/guzzle": "^7.9.1 | ^8.3",
+    "phpstan/phpstan": "^2.3",
     "phpunit/phpunit": "^13.4",
     "rector/rector": "2.8.4",
     "symfony/filesystem": "^8.1"
@@ -40,5 +41,22 @@
   "config": {
     "preferred-install": "dist",
     "sort-packages": true
+  },
+  "scripts": {
+    "precommit": [
+      "@test:unit",
+      "@test:integration",
+      "@phpstan",
+      "@rector:fix",
+      "@cs:fix"
+    ],
+   "test:unit": "vendor/bin/phpunit --testsuite unit",
+   "test:integration": "vendor/bin/phpunit --testsuite integration",
+   "test:blackbox": "test/run-blackbox-tests.sh",
+   "phpstan": "vendor/bin/phpstan analyse",
+   "rector": "vendor/bin/rector process --dry-run",
+   "rector:fix": "vendor/bin/rector process",
+   "cs": "vendor/bin/php-cs-fixer check --diff",
+   "cs:fix": "vendor/bin/php-cs-fixer fix"
   }
 }
