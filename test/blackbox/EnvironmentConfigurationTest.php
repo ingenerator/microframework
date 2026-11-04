@@ -4,8 +4,7 @@ namespace test\blackbox;
 
 class EnvironmentConfigurationTest extends BaseBlackboxTestCase
 {
-
-    public function test_can_configure_custom_timezone_in_bootstrap()
+    public function testCanConfigureCustomTimezoneInBootstrap()
     {
         $handler_url = $this->provisionDynamicHandler(
             <<<'PHP'
@@ -42,7 +41,7 @@ class EnvironmentConfigurationTest extends BaseBlackboxTestCase
         );
     }
 
-    public function test_can_configure_locale_in_bootstrap()
+    public function testCanConfigureLocaleInBootstrap()
     {
         $handler_url = $this->provisionDynamicHandler(
             <<<'PHP'
@@ -78,5 +77,4 @@ class EnvironmentConfigurationTest extends BaseBlackboxTestCase
             $this->guzzle->get($handler_url),
         );
     }
-
 }

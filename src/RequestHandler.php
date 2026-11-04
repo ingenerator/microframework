@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * The RequestHandler is the main implementation of the function / app code
+ * The RequestHandler is the main implementation of the function / app code.
  *
  * As far as MicroFramework is concerned, there is only one RequestHandler class / instance - there
  * is no (and never will be) built-in support for routing etc. If a function needs to route / handle

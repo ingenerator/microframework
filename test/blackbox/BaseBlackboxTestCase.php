@@ -2,13 +2,13 @@
 
 namespace test\blackbox;
 
-use UnexpectedValueException;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use UnexpectedValueException;
 
 class BaseBlackboxTestCase extends TestCase
 {
@@ -60,7 +60,7 @@ class BaseBlackboxTestCase extends TestCase
         // Wait a moment for logs to be written - they aren't always absolutely immediate
         usleep(100_000);
 
-        if ( ! is_file(self::$test_subject_logs_file)) {
+        if (!is_file(self::$test_subject_logs_file)) {
             return [];
         }
 
@@ -76,7 +76,7 @@ class BaseBlackboxTestCase extends TestCase
     private function extractSyslogRFC3164MessageBody(string $line): string
     {
         // https://datatracker.ietf.org/doc/html/rfc3164
-        if ( ! preg_match('/^<\d+>\w+\s+\d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
+        if (!preg_match('/^<\d+>\w+\s+\d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
             throw new UnexpectedValueException('Unexpected log line format: `'.$line.'`');
         }
 
@@ -86,7 +86,7 @@ class BaseBlackboxTestCase extends TestCase
     protected function assertResponseMatches(
         int $expect_code,
         string $expect_body,
-        ResponseInterface $response
+        ResponseInterface $response,
     ): void {
         $this->assertSame(
             [
@@ -100,7 +100,7 @@ class BaseBlackboxTestCase extends TestCase
         );
     }
 
-    protected static function provisionDynamicHandlerFactoryWithDefaultBootstrap(string $handler_factory_implementation
+    protected static function provisionDynamicHandlerFactoryWithDefaultBootstrap(string $handler_factory_implementation,
     ): string {
         $template = <<<'PHP'
             <?php
@@ -138,5 +138,4 @@ class BaseBlackboxTestCase extends TestCase
 
         return '/dynamic/'.$id.'/';
     }
-
 }

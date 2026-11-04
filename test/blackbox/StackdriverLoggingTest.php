@@ -6,12 +6,11 @@ use Ingenerator\PHPUtils\StringEncoding\JSON;
 
 class StackdriverLoggingTest extends BaseBlackboxTestCase
 {
-
     // Note, these tests are necessarily verbose and fairly tightly coupled to the code structure, because I think for
     // a blackbox test we should be as explicit as we can be about the detail of the log messages that are written -
     // but the log messages include filenames, line numbers, and other semi-dynamic content.
 
-    public function test_it_logs_requests_on_completion_in_stackdriver_format()
+    public function testItLogsRequestsOnCompletionInStackdriverFormat()
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'
@@ -90,13 +89,13 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'service' => 'my-service',
                     'version' => 'ab28372',
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
             ],
             $request_log_msg,
         );
     }
 
-    public function test_it_logs_uncaught_exceptions_and_request_in_stackdriver_format()
+    public function testItLogsUncaughtExceptionsAndRequestInStackdriverFormat()
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'
@@ -190,7 +189,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                         'functionName' => 'Ingenerator\MicroFramework\MicroFramework->logUncaughtException',
                     ],
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
                 'exception' => [
                     'class' => 'RuntimeException',
                     'msg' => 'I broke',
@@ -240,13 +239,13 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'service' => 'my-service',
                     'version' => 'a-version',
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
             ],
             $request_log_msg,
         );
     }
 
-    public function test_it_outputs_custom_app_logs_in_stackdriver_format()
+    public function testItOutputsCustomAppLogsInStackdriverFormat()
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'
@@ -285,7 +284,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
 
         $this->assertResponseMatches(
             200,
-            "OK",
+            'OK',
             $this->guzzle->post($handler_url, ['headers' => ['User-Agent' => 'My Test UA']]),
         );
 
@@ -338,7 +337,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                         'remoteIp' => gethostbyname(gethostname()),
                     ],
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
                 'logging.googleapis.com/sourceLocation' => [
                     'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_0ba32a129fbc45c0d394a95f76d7bdf405c84692/index.php',
                     'line' => 18,
@@ -371,10 +370,9 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'service' => 'my-service',
                     'version' => 'a-version',
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
             ],
             $request_log_msg,
         );
     }
-
 }

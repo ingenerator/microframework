@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace Ingenerator\MicroFramework;
-
 
 use ErrorException;
 use GuzzleHttp\Psr7\ServerRequest;
@@ -11,8 +10,12 @@ use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Throwable;
+use UnexpectedValueException;
+
 use function date_default_timezone_set;
+use function error_reporting;
 use function get_class;
 use function header;
 use function headers_sent;
@@ -22,13 +25,14 @@ use function set_error_handler;
 use function setlocale;
 use function sprintf;
 use function substr;
+
 use const LC_ALL;
 
 class MicroFramework
 {
     public static function throwingErrorHandler($code, $error, $file = null, $line = null): bool
     {
-        if (\error_reporting() & $code) {
+        if (error_reporting() & $code) {
             // This error is not suppressed by current error reporting settings
             // Convert the error into an ErrorException
             throw new ErrorException($error, $code, 0, $file, $line);
@@ -39,21 +43,19 @@ class MicroFramework
     }
 
     /**
-     * Executes a request
+     * Executes a request.
      *
      * @param callable():LoggerProvider $logger_provider_factory function that returns a LoggerProvider to get/create a suitable logger
      * @param callable(LoggerInterface $logger):RequestHandler $handler_factory function that returns a class containing the application code
-     * @param null|callable():ServerRequestInterface $request_factory callable that provides a ServerRequest - defaults to guzzle/psr7's ServerRequest::fromGlobals()
-     * @param null|int|float $start_hr_time the hrtime() at the start of the request - ideally captured as the very first thing in index.php. Used for logging latency
+     * @param callable():ServerRequestInterface|null $request_factory callable that provides a ServerRequest - defaults to guzzle/psr7's ServerRequest::fromGlobals()
+     * @param int|float|null $start_hr_time the hrtime() at the start of the request - ideally captured as the very first thing in index.php. Used for logging latency
      * @param string $default_timezone default timezone to set before execution
      * @param string $locale default locale to set before execution
-     *
-     * @return void
      */
     public function execute(
         callable $logger_provider_factory,
         callable $handler_factory,
-        null|int|float $start_hr_time = null,
+        int|float|null $start_hr_time = null,
         ?callable $request_factory = null,
         string $default_timezone = 'Europe/London',
         string $locale = 'en_UK.utf-8',
@@ -101,17 +103,16 @@ class MicroFramework
         }
     }
 
-
     private function resetOutputBuffersAssertingNoOutput(): void
     {
         if (headers_sent($file, $line)) {
-            throw new \RuntimeException('Headers already sent (output started at '.$file.':'.$line);
+            throw new RuntimeException('Headers already sent (output started at '.$file.':'.$line);
         }
 
         while (ob_get_level()) {
             $buffer = ob_get_clean();
-            if ( ! empty($buffer)) {
-                throw new \RuntimeException('Unexpected buffered output during request ('.substr($buffer, 0, 50));
+            if (!empty($buffer)) {
+                throw new RuntimeException('Unexpected buffered output during request ('.substr($buffer, 0, 50));
             }
         }
     }
@@ -122,7 +123,7 @@ class MicroFramework
             // When behind apache, at least, it is not valid to send an 'HTTP/xx {code}' without a reason phrase for a
             // custom response code - apache will attempt to look up the reason phrase for the code and will convert the
             // response to a 500 if it doesn't find anything (despite logging in the request log with the custom code).
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'HTTP reason phrase cannot be empty and there is no default for status "'.$response->getStatusCode().
                 '"',
             );
@@ -139,7 +140,7 @@ class MicroFramework
 
         foreach ($response->getHeaders() as $header => $header_values) {
             if (count($header_values) > 1) {
-                throw new \UnexpectedValueException('Cannot specify multiple values for the '.$header.' header');
+                throw new UnexpectedValueException('Cannot specify multiple values for the '.$header.' header');
             }
             header($header.': '.array_shift($header_values), replace: true);
         }
@@ -163,11 +164,10 @@ class MicroFramework
 
     private function renderErrorResponse(): void
     {
-        if ( ! headers_sent()) {
+        if (!headers_sent()) {
             // We can't send these if they've already been sent...
             header('Content-Type: text/plain', response_code: 500);
         }
         echo "Unexpected fatal error\n";
     }
-
 }

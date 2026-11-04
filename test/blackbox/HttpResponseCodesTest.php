@@ -29,7 +29,7 @@ class HttpResponseCodesTest extends BaseBlackboxTestCase
     #[TestWith([404])]
     #[TestWith([500])]
     #[TestWith([502])]
-    public function test_it_returns_status_code_from_handler(int $status_code)
+    public function testItReturnsStatusCodeFromHandler(int $status_code)
     {
         $this->assertResponseMatches(
             $status_code,
@@ -38,7 +38,7 @@ class HttpResponseCodesTest extends BaseBlackboxTestCase
         );
     }
 
-    public function test_it_can_optionally_use_custom_status_codes_if_reason_phrase_provided()
+    public function testItCanOptionallyUseCustomStatusCodesIfReasonPhraseProvided()
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
@@ -57,5 +57,4 @@ class HttpResponseCodesTest extends BaseBlackboxTestCase
 
         $this->assertResponseMatches(599, '', $this->guzzle->get($handler_url));
     }
-
 }

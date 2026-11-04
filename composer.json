@@ -5,8 +5,9 @@
   "type": "library",
   "require": {
     "php": "~8.5.0",
+    "guzzlehttp/psr7": "^2.7 | ^3.2",
     "ingenerator/php-utils": "^3.0",
-    "guzzlehttp/psr7": "^2.7 | ^3.2"
+    "php-cs-fixer/shim": "^3.95"
   },
   "require-dev": {
     "fig/log-test": "^1.1",

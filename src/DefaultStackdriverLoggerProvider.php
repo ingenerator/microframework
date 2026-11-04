@@ -8,18 +8,16 @@ use Psr\Log\LoggerInterface;
 
 class DefaultStackdriverLoggerProvider implements LoggerProvider
 {
-
     public function __construct(
         protected readonly string $service_name,
         protected readonly string $version_file_path,
         protected readonly string $log_destination = 'php://stdout',
     ) {
-
     }
 
     public function getLogger(): LoggerInterface
     {
-        if ( ! StackdriverApplicationLogger::isInitialised()) {
+        if (!StackdriverApplicationLogger::isInitialised()) {
             StackdriverApplicationLogger::initialise(
                 fn () => new StackdriverApplicationLogger(
                     $this->log_destination,

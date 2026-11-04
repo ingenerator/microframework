@@ -2,8 +2,8 @@
 
 namespace test\blackbox;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use GuzzleHttp\RequestOptions;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class HttpHeadersTest extends BaseBlackboxTestCase
 {
@@ -64,7 +64,7 @@ class HttpHeadersTest extends BaseBlackboxTestCase
     }
 
     #[DataProvider('provider_headers')]
-    public function test_it_returns_expected_headers(array $specified_headers, array $expected_headers)
+    public function testItReturnsExpectedHeaders(array $specified_headers, array $expected_headers)
     {
         $response = $this->guzzle->post(
             self::$handler_url,
@@ -82,7 +82,7 @@ class HttpHeadersTest extends BaseBlackboxTestCase
         $this->assertSame($expected_headers, $all_headers);
     }
 
-    public function test_it_gives_error_on_unsupported_use_of_duplicate_output_headers()
+    public function testItGivesErrorOnUnsupportedUseOfDuplicateOutputHeaders()
     {
         // We can't support multiples for the same header because we can't reliably guess whether to pass
         // replace => true or replace => false  into the `header()` call and it's more important that we
@@ -99,5 +99,4 @@ class HttpHeadersTest extends BaseBlackboxTestCase
 
         $this->assertResponseMatches(500, "Unexpected fatal error\n", $response);
     }
-
 }

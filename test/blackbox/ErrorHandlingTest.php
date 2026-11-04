@@ -6,7 +6,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class ErrorHandlingTest extends BaseBlackboxTestCase
 {
-
     public static function provider_error_handling(): array
     {
         return [
@@ -74,7 +73,7 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
     }
 
     #[DataProvider('provider_error_handling')]
-    public function test_it_captures_errors_and_exceptions(string $handler_code)
+    public function testItCapturesErrorsAndExceptions(string $handler_code)
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap($handler_code);
 
@@ -84,5 +83,4 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
             $this->guzzle->get($handler_url),
         );
     }
-
 }

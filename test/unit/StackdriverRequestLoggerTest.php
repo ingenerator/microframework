@@ -2,22 +2,22 @@
 
 namespace test\unit;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Ingenerator\MicroFramework\RequestLogger;
 use Ingenerator\MicroFramework\StackdriverRequestLogger;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use Ingenerator\PHPUtils\Superglobals\ServerGlobal;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\Test\TestLogger;
 
 class StackdriverRequestLoggerTest extends TestCase
 {
-    public function test_it_is_initialisable_request_logger()
+    public function testItIsInitialisableRequestLogger()
     {
         $this->assertInstanceOf(RequestLogger::class, $this->newSubject());
     }
 
-    public function test_its_log_request_logs_an_exception_and_returns_on_unknown_logger_type()
+    public function testItsLogRequestLogsAnExceptionAndReturnsOnUnknownLoggerType()
     {
         $logger = new TestLogger();
         $this->newSubject()->logRequest($logger, 0);
@@ -44,7 +44,7 @@ class StackdriverRequestLoggerTest extends TestCase
     }
 
     #[DataProvider('provider_calculate_request_start')]
-    public function test_it_calculates_request_start_time_from_elapsed_high_res_time(
+    public function testItCalculatesRequestStartTimeFromElapsedHighResTime(
         int|float $hrtime_start,
         int|float $hrtime_now,
         float $microtime_now,
@@ -61,7 +61,7 @@ class StackdriverRequestLoggerTest extends TestCase
         );
     }
 
-    public function test_it_logs_sane_value_for_request_time_with_default_implementation()
+    public function testItLogsSaneValueForRequestTimeWithDefaultImplementation()
     {
         $actual_start_microtime = microtime(true);
         $start_hrtime = hrtime(true);
@@ -90,10 +90,9 @@ class StackdriverRequestLoggerTest extends TestCase
         );
     }
 
-
     public function stubSubjectWithHrTimeAndMicrotime(
         float|int $hrtime_now,
-        float $microtime_now
+        float $microtime_now,
     ): StackdriverRequestLogger {
         /*
          * As we don't currently have a defined mock for hrtime, and it's not possible to use a callable as a default
@@ -125,7 +124,9 @@ class StackdriverRequestLoggerTest extends TestCase
         return new class extends StackdriverApplicationLogger {
             public readonly array $request_log_calls;
 
-            public function __construct() { }
+            public function __construct()
+            {
+            }
 
             public function logRequest(ServerGlobal $server = new ServerGlobal(), ?float $request_start_time = null): void
             {
@@ -138,6 +139,4 @@ class StackdriverRequestLoggerTest extends TestCase
     {
         return new StackdriverRequestLogger();
     }
-
-
 }

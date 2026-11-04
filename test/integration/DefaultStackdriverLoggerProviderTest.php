@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 
 class DefaultStackdriverLoggerProviderTest extends TestCase
 {
-    public function test_it_is_initialisable_logger_provider()
+    public function testItIsInitialisableLoggerProvider()
     {
         $this->assertInstanceOf(LoggerProvider::class, $this->newSubject());
     }
 
-    public function test_it_provides_expected_logger_and_request_logger()
+    public function testItProvidesExpectedLoggerAndRequestLogger()
     {
         $subject = $this->newSubject();
         $this->assertInstanceOf(StackdriverApplicationLogger::class, $subject->getLogger());
@@ -34,6 +34,4 @@ class DefaultStackdriverLoggerProviderTest extends TestCase
             '/path/to/any/file',
         );
     }
-
-
 }
