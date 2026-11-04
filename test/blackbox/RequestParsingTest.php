@@ -7,6 +7,9 @@ namespace test\blackbox;
 use Ingenerator\PHPUtils\StringEncoding\JSON;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/**
+ * @phpstan-type TGuzzleRequestOptions array{form_params?: array<string, array<int|string>|scalar|null>, json?: mixed}
+ */
 class RequestParsingTest extends BaseBlackboxTestCase
 {
     private static string $handler_url;
@@ -35,7 +38,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
     }
 
     /**
-     * @return array<string, array{string, array<string, mixed>, array{method: string, body: string, parsed_body: array<string, mixed>}}>
+     * @return array<string, array{string, TGuzzleRequestOptions, array{method: string, body: string, parsed_body: array<string, mixed>}}>
      */
     public static function provider_request_bodies(): array
     {
@@ -115,7 +118,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param TGuzzleRequestOptions $options
      * @param array{method: string, body: string, parsed_body: array<string, mixed>} $expect
      */
     #[DataProvider('provider_request_bodies')]

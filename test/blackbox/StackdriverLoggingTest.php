@@ -56,16 +56,22 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         $request_log_msg = JSON::decodeArray($messages[0]);
 
         // Assert things that are dynamic and can't be exactly asserted
+        $this->assertIsArray($request_log_msg['httpRequest']);
+        $this->assertIsString($request_log_msg['httpRequest']['latency']);
         $this->assertMatchesRegularExpression('/^0.00\d{4}s$/', $request_log_msg['httpRequest']['latency']);
         unset($request_log_msg['httpRequest']['latency']);
 
+        $this->assertIsArray($request_log_msg['context']);
+        $this->assertIsString($request_log_msg['context']['req']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $request_log_msg['context']['req']);
         unset($request_log_msg['context']['req']);
 
+        $this->assertIsString($request_log_msg['logging.googleapis.com/trace']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $request_log_msg['logging.googleapis.com/trace']);
         unset($request_log_msg['logging.googleapis.com/trace']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
+        $this->assertIsFloat($request_log_msg['context']['mem_mb']);
         $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
         unset($request_log_msg['context']['mem_mb']);
 
@@ -142,7 +148,10 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         $request_log_msg = JSON::decodeArray($messages[1]);
 
         // Assert the things that vary and can't easily be asserted directly
+        $this->assertIsArray($error_log_msg['context']);
+        $this->assertIsString($error_log_msg['context']['req']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $error_log_msg['context']['req']);
+        $this->assertIsArray($request_log_msg['context']);
         $this->assertSame(
             $error_log_msg['context']['req'],
             $request_log_msg['context']['req'],
@@ -151,6 +160,8 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($error_log_msg['context']['req']);
         unset($request_log_msg['context']['req']);
 
+        $this->assertIsString($error_log_msg['logging.googleapis.com/trace']);
+        $this->assertIsString($request_log_msg['logging.googleapis.com/trace']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $request_log_msg['logging.googleapis.com/trace']);
         $this->assertSame(
             $error_log_msg['logging.googleapis.com/trace'],
@@ -160,10 +171,13 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($error_log_msg['logging.googleapis.com/trace']);
         unset($request_log_msg['logging.googleapis.com/trace']);
 
+        $this->assertIsArray($request_log_msg['httpRequest']);
+        $this->assertIsString($request_log_msg['httpRequest']['latency']);
         $this->assertMatchesRegularExpression('/^0.00\d{4}s$/', $request_log_msg['httpRequest']['latency']);
         unset($request_log_msg['httpRequest']['latency']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
+        $this->assertIsFloat($request_log_msg['context']['mem_mb']);
         $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
         unset($request_log_msg['context']['mem_mb']);
 
@@ -295,7 +309,10 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         $request_log_msg = JSON::decodeArray($messages[1]);
 
         // Assert the things that vary and can't easily be asserted directly
+        $this->assertIsArray($error_log_msg['context']);
+        $this->assertIsString($error_log_msg['context']['req']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $error_log_msg['context']['req']);
+        $this->assertIsArray($request_log_msg['context']);
         $this->assertSame(
             $error_log_msg['context']['req'],
             $request_log_msg['context']['req'],
@@ -304,6 +321,8 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($error_log_msg['context']['req']);
         unset($request_log_msg['context']['req']);
 
+        $this->assertIsString($error_log_msg['logging.googleapis.com/trace']);
+        $this->assertIsString($request_log_msg['logging.googleapis.com/trace']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $request_log_msg['logging.googleapis.com/trace']);
         $this->assertSame(
             $error_log_msg['logging.googleapis.com/trace'],
@@ -313,10 +332,13 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($error_log_msg['logging.googleapis.com/trace']);
         unset($request_log_msg['logging.googleapis.com/trace']);
 
+        $this->assertIsArray($request_log_msg['httpRequest']);
+        $this->assertIsString($request_log_msg['httpRequest']['latency']);
         $this->assertMatchesRegularExpression('/^0.00\d{4}s$/', $request_log_msg['httpRequest']['latency']);
         unset($request_log_msg['httpRequest']['latency']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
+        $this->assertIsFloat($request_log_msg['context']['mem_mb']);
         $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
         unset($request_log_msg['context']['mem_mb']);
 
