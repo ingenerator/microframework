@@ -30,7 +30,7 @@ use const LC_ALL;
 
 class MicroFramework
 {
-    public static function throwingErrorHandler($code, $error, $file = null, $line = null): bool
+    public static function throwingErrorHandler(int $code, string $error, ?string $file = null, ?int $line = null): bool
     {
         if (error_reporting() & $code) {
             // This error is not suppressed by current error reporting settings

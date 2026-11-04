@@ -27,6 +27,9 @@ class HttpHeadersTest extends BaseBlackboxTestCase
         );
     }
 
+    /**
+     * @return array<string, array{array<string,string>, array<string,list<string>>}>
+     */
     public static function provider_headers(): array
     {
         return [
@@ -65,6 +68,10 @@ class HttpHeadersTest extends BaseBlackboxTestCase
         ];
     }
 
+    /**
+     * @param array<string,string> $specified_headers
+     * @param array<string,list<string>> $expected_headers
+     */
     #[DataProvider('provider_headers')]
     public function testItReturnsExpectedHeaders(array $specified_headers, array $expected_headers): void
     {

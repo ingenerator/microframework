@@ -1,6 +1,7 @@
 
 ### Unreleased
 
+* [BREAKING]: Added strict types and array shapes throughout.
 * [BREAKING]: FactoryFunction::call() no longer accepts or passes arguments to the callable.
 * [Internal] Bump dev dependencies
 * Require PHP 8.5

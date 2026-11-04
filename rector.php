@@ -15,5 +15,6 @@ return RectorConfig::configure()
     ->withPreparedSets(
         codeQuality: true,
         typeDeclarations: true,
+        typeDeclarationDocblocks: true,
     )
     ->withImportNames();

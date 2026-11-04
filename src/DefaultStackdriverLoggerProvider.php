@@ -3,6 +3,7 @@
 namespace Ingenerator\MicroFramework;
 
 use Ingenerator\PHPUtils\Logging\DefaultLogMetadata;
+use Ingenerator\PHPUtils\Logging\LogMetadataProvider;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use Psr\Log\LoggerInterface;
 
@@ -29,6 +30,9 @@ class DefaultStackdriverLoggerProvider implements LoggerProvider
         return StackdriverApplicationLogger::instance();
     }
 
+    /**
+     * @return list<LogMetadataProvider|array<string,mixed>>
+     */
     protected function getMetadataProviders(): array
     {
         return [

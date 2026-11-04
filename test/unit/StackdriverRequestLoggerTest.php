@@ -26,6 +26,9 @@ class StackdriverRequestLoggerTest extends TestCase
         $this->assertTrue($logger->hasErrorThatContains('Could not log request details - got a '.$logger::class));
     }
 
+    /**
+     * @return array<string, array<string, float|int>>
+     */
     public static function provider_calculate_request_start(): array
     {
         return [
@@ -121,11 +124,14 @@ class StackdriverRequestLoggerTest extends TestCase
     }
 
     /**
-     * @return StackdriverApplicationLogger&object{request_log_calls: array}
+     * @return StackdriverApplicationLogger&object{request_log_calls: array{server: ServerGlobal, request_start_time: ?float}}
      */
     public function makeLoggerSpy(): StackdriverApplicationLogger
     {
         return new class extends StackdriverApplicationLogger {
+            /**
+             * @var array{server: ServerGlobal, request_start_time: ?float}
+             */
             public private(set) array $request_log_calls;
 
             public function __construct()

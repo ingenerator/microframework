@@ -8,6 +8,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class ErrorHandlingTest extends BaseBlackboxTestCase
 {
+    /**
+     * @return array<string, list<string>>
+     */
     public static function provider_error_handling(): array
     {
         return [

@@ -34,6 +34,9 @@ class RequestParsingTest extends BaseBlackboxTestCase
         );
     }
 
+    /**
+     * @return array<string, array{string, array<string, mixed>, array{method: string, body: string, parsed_body: array<string, mixed>}}>
+     */
     public static function provider_request_bodies(): array
     {
         return [
@@ -111,6 +114,10 @@ class RequestParsingTest extends BaseBlackboxTestCase
         ];
     }
 
+    /**
+     * @param array<string, mixed> $options
+     * @param array{method: string, body: string, parsed_body: array<string, mixed>} $expect
+     */
     #[DataProvider('provider_request_bodies')]
     public function testItCanReceiveIncomingRequestBodiesInExpectedFormats(string $method, array $options, array $expect): void
     {
@@ -120,6 +127,9 @@ class RequestParsingTest extends BaseBlackboxTestCase
         $this->assertSame($expect, $received_payload);
     }
 
+    /**
+     * @return array<string, array{array<string,string|list<string>>, array<string,list<string>>}>
+     */
     public static function provider_request_headers(): array
     {
         return [
@@ -154,6 +164,10 @@ class RequestParsingTest extends BaseBlackboxTestCase
         ];
     }
 
+    /**
+     * @param array<string, string|list<string>> $send_headers
+     * @param array<string, list<string>> $expect
+     */
     #[DataProvider('provider_request_headers')]
     public function testItCanReceiveIncomingHeaders(array $send_headers, array $expect): void
     {

@@ -55,6 +55,9 @@ class BaseBlackboxTestCase extends TestCase
         }
     }
 
+    /**
+     * @return list<string>
+     */
     protected function getTestSubjectLogEntriesDuringTest(): array
     {
         // Wait a moment for logs to be written - they aren't always absolutely immediate
