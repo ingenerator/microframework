@@ -10,7 +10,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
     // a blackbox test we should be as explicit as we can be about the detail of the log messages that are written -
     // but the log messages include filenames, line numbers, and other semi-dynamic content.
 
-    public function testItLogsRequestsOnCompletionInStackdriverFormat()
+    public function testItLogsRequestsOnCompletionInStackdriverFormat(): void
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'
@@ -95,7 +95,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function testItLogsUncaughtExceptionsAndRequestInStackdriverFormat()
+    public function testItLogsUncaughtExceptionsAndRequestInStackdriverFormat(): void
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'
@@ -245,7 +245,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function testItOutputsCustomAppLogsInStackdriverFormat()
+    public function testItOutputsCustomAppLogsInStackdriverFormat(): void
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'

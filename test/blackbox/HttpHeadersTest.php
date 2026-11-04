@@ -66,7 +66,7 @@ class HttpHeadersTest extends BaseBlackboxTestCase
     }
 
     #[DataProvider('provider_headers')]
-    public function testItReturnsExpectedHeaders(array $specified_headers, array $expected_headers)
+    public function testItReturnsExpectedHeaders(array $specified_headers, array $expected_headers): void
     {
         $response = $this->guzzle->post(
             self::$handler_url,
@@ -84,7 +84,7 @@ class HttpHeadersTest extends BaseBlackboxTestCase
         $this->assertSame($expected_headers, $all_headers);
     }
 
-    public function testItGivesErrorOnUnsupportedUseOfDuplicateOutputHeaders()
+    public function testItGivesErrorOnUnsupportedUseOfDuplicateOutputHeaders(): void
     {
         // We can't support multiples for the same header because we can't reliably guess whether to pass
         // replace => true or replace => false  into the `header()` call and it's more important that we

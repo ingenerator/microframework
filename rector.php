@@ -13,6 +13,7 @@ return RectorConfig::configure()
     ->withComposerBased(phpunit: true)
     ->withPhpSets()
     ->withPreparedSets(
-        codeQuality: true
+        codeQuality: true,
+        typeDeclarations: true,
     )
     ->withImportNames();

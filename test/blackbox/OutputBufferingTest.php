@@ -8,7 +8,7 @@ use test\blackbox\BaseBlackboxTestCase;
 
 class OutputBufferingTest extends BaseBlackboxTestCase
 {
-    public function testItHandlesErrorEvenIfOutputBeganBeforeFramework()
+    public function testItHandlesErrorEvenIfOutputBeganBeforeFramework(): void
     {
         $handler_url = $this->provisionDynamicHandler(
             <<<'PHP'
@@ -46,7 +46,7 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function testItReturnsErrorWithoutOutputIfAnyCodeWritesOutputDuringRequestHandling()
+    public function testItReturnsErrorWithoutOutputIfAnyCodeWritesOutputDuringRequestHandling(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
@@ -67,7 +67,7 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function testItTreatsAsErrorIfUserLeavesOutputBuffersOpen()
+    public function testItTreatsAsErrorIfUserLeavesOutputBuffersOpen(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
@@ -89,7 +89,7 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function testItTreatsAsErrorIfUserFlushesOutputBuffers()
+    public function testItTreatsAsErrorIfUserFlushesOutputBuffers(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
@@ -112,7 +112,7 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function testItDoesNotTreatAsErrorIfUserHandlesOutputBufferingCorrectly()
+    public function testItDoesNotTreatAsErrorIfUserHandlesOutputBufferingCorrectly(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
@@ -134,7 +134,7 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function testItDoesNotTreatAsErrorIfUserHandlesOutputBufferingCorrectlyWithoutRendering()
+    public function testItDoesNotTreatAsErrorIfUserHandlesOutputBufferingCorrectlyWithoutRendering(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'

@@ -6,7 +6,7 @@ namespace test\blackbox;
 
 class BlackboxSmokeTest extends BaseBlackboxTestCase
 {
-    public function testTestSubjectRespondsFromDefaultHandler()
+    public function testTestSubjectRespondsFromDefaultHandler(): void
     {
         $this->assertResponseMatches(
             200,

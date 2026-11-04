@@ -10,21 +10,21 @@ use UnexpectedValueException;
 
 class FactoryFunctionTest extends TestCase
 {
-    public function testItCallsFunctionAndReturnsResult()
+    public function testItCallsFunctionAndReturnsResult(): void
     {
         $instance = new stdClass();
-        $this->assertSame($instance, FactoryFunction::call(fn () => $instance, stdClass::class));
+        $this->assertSame($instance, FactoryFunction::call(fn (): stdClass => $instance, stdClass::class));
     }
 
-    public function testItAllowsFactoryToReturnSubclass()
+    public function testItAllowsFactoryToReturnSubclass(): void
     {
         $instance = new class extends DateTimeImmutable { };
-        $this->assertSame($instance, FactoryFunction::call(fn () => $instance, DateTimeImmutable::class));
+        $this->assertSame($instance, FactoryFunction::call(fn (): object => $instance, DateTimeImmutable::class));
     }
 
-    public function testItThrowsIfReturnedValueIsNotExpectedType()
+    public function testItThrowsIfReturnedValueIsNotExpectedType(): void
     {
-        $fn = fn () => new stdClass();
+        $fn = fn (): stdClass => new stdClass();
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessageIsOrContains('Factory for DateTimeImmutable incorrectly returned stdClass');
         FactoryFunction::call($fn, DateTimeImmutable::class);

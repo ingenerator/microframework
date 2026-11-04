@@ -12,12 +12,12 @@ use PHPUnit\Framework\TestCase;
 
 class DefaultStackdriverLoggerProviderTest extends TestCase
 {
-    public function testItIsInitialisableLoggerProvider()
+    public function testItIsInitialisableLoggerProvider(): void
     {
         $this->assertInstanceOf(LoggerProvider::class, $this->newSubject());
     }
 
-    public function testItProvidesExpectedLoggerAndRequestLogger()
+    public function testItProvidesExpectedLoggerAndRequestLogger(): void
     {
         $subject = $this->newSubject();
         $this->assertInstanceOf(StackdriverApplicationLogger::class, $subject->getLogger());

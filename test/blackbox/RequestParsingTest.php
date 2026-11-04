@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\blackbox;
 
 use Ingenerator\PHPUtils\StringEncoding\JSON;
@@ -110,7 +112,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
     }
 
     #[DataProvider('provider_request_bodies')]
-    public function testItCanReceiveIncomingRequestBodiesInExpectedFormats($method, $options, $expect): void
+    public function testItCanReceiveIncomingRequestBodiesInExpectedFormats(string $method, array $options, array $expect): void
     {
         $response = $this->guzzle->request($method, self::$handler_url, $options);
         $received_payload = JSON::decodeArray($response->getBody()->getContents());
@@ -153,7 +155,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
     }
 
     #[DataProvider('provider_request_headers')]
-    public function testItCanReceiveIncomingHeaders($send_headers, $expect): void
+    public function testItCanReceiveIncomingHeaders(array $send_headers, array $expect): void
     {
         $response = $this->guzzle->get(self::$handler_url, ['headers' => [
             'User-Agent' => self::class,
@@ -163,7 +165,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
         $this->assertSame($expect, $received_payload['headers']);
     }
 
-    public function testItCanDetectIncomingUrlsWhenRewriting()
+    public function testItCanDetectIncomingUrlsWhenRewriting(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'

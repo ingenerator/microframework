@@ -75,7 +75,7 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
     }
 
     #[DataProvider('provider_error_handling')]
-    public function testItCapturesErrorsAndExceptions(string $handler_code)
+    public function testItCapturesErrorsAndExceptions(string $handler_code): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap($handler_code);
 

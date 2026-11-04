@@ -13,12 +13,12 @@ use RuntimeException;
 
 class StackdriverRequestLoggerTest extends TestCase
 {
-    public function testItIsInitialisableRequestLogger()
+    public function testItIsInitialisableRequestLogger(): void
     {
         $this->assertInstanceOf(RequestLogger::class, $this->newSubject());
     }
 
-    public function testItsLogRequestLogsAnExceptionAndReturnsOnUnknownLoggerType()
+    public function testItsLogRequestLogsAnExceptionAndReturnsOnUnknownLoggerType(): void
     {
         $logger = new TestLogger();
         $this->newSubject()->logRequest($logger, 0);
@@ -50,7 +50,7 @@ class StackdriverRequestLoggerTest extends TestCase
         int|float $hrtime_now,
         float $microtime_now,
         float $expect_start_time,
-    ) {
+    ): void {
         $subject = $this->stubSubjectWithHrTimeAndMicrotime($hrtime_now, $microtime_now);
         $logger = $this->makeLoggerSpy();
 
@@ -62,7 +62,7 @@ class StackdriverRequestLoggerTest extends TestCase
         );
     }
 
-    public function testItLogsSaneValueForRequestTimeWithDefaultImplementation()
+    public function testItLogsSaneValueForRequestTimeWithDefaultImplementation(): void
     {
         $actual_start_microtime = microtime(true);
         $start_hrtime = hrtime(true);
