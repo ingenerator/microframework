@@ -2,6 +2,7 @@
 
 namespace test\unit;
 
+use DateTimeZone;
 use DateTimeImmutable;
 use Ingenerator\MicroFramework\FactoryFunction;
 use Ingenerator\PHPUtils\DateTime\DateString;
@@ -25,7 +26,7 @@ class FactoryFunctionTest extends TestCase
             DateTimeImmutable::class,
             [
                 '2024-03-01 08:23:20',
-                new \DateTimeZone('Europe/Paris'),
+                new DateTimeZone('Europe/Paris'),
             ]
         );
         $this->assertSame('2024-03-01T08:23:20.000000+01:00', DateString::isoMS($result));

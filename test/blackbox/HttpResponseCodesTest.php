@@ -2,6 +2,8 @@
 
 namespace test\blackbox;
 
+use PHPUnit\Framework\Attributes\TestWith;
+
 class HttpResponseCodesTest extends BaseBlackboxTestCase
 {
     private static string $handler_url;
@@ -22,13 +24,11 @@ class HttpResponseCodesTest extends BaseBlackboxTestCase
         );
     }
 
-    /**
-     * @testWith [200]
-     *           [202]
-     *           [404]
-     *           [500]
-     *           [502]
-     */
+    #[TestWith([200])]
+    #[TestWith([202])]
+    #[TestWith([404])]
+    #[TestWith([500])]
+    #[TestWith([502])]
     public function test_it_returns_status_code_from_handler(int $status_code)
     {
         $this->assertResponseMatches(

@@ -2,6 +2,7 @@
 
 namespace test\unit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Ingenerator\MicroFramework\RequestLogger;
 use Ingenerator\MicroFramework\StackdriverRequestLogger;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
@@ -42,9 +43,7 @@ class StackdriverRequestLoggerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provider_calculate_request_start
-     */
+    #[DataProvider('provider_calculate_request_start')]
     public function test_it_calculates_request_start_time_from_elapsed_high_res_time(
         int|float $hrtime_start,
         int|float $hrtime_now,

@@ -2,6 +2,8 @@
 
 namespace test\blackbox;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+
 class ErrorHandlingTest extends BaseBlackboxTestCase
 {
 
@@ -71,9 +73,7 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
         ];
     }
 
-    /**
-     * @dataProvider provider_error_handling
-     */
+    #[DataProvider('provider_error_handling')]
     public function test_it_captures_errors_and_exceptions(string $handler_code)
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap($handler_code);

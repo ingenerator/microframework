@@ -1,6 +1,7 @@
 
 ### Unreleased
 
+* [Internal] Bump dev dependencies
 * Require PHP 8.5
 * Require ingenerator/php-utils version 3
 * Support Guzzle PSR-7 3.x (as well as 2.x)

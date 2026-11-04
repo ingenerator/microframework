@@ -2,7 +2,6 @@
 
 namespace Ingenerator\MicroFramework;
 
-use Closure;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
