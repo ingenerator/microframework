@@ -9,6 +9,7 @@ use Ingenerator\PHPUtils\Superglobals\ServerGlobal;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\Test\TestLogger;
+use RuntimeException;
 
 class StackdriverRequestLoggerTest extends TestCase
 {
@@ -119,10 +120,13 @@ class StackdriverRequestLoggerTest extends TestCase
         return $subject;
     }
 
+    /**
+     * @return StackdriverApplicationLogger&object{request_log_calls: array}
+     */
     public function makeLoggerSpy(): StackdriverApplicationLogger
     {
         return new class extends StackdriverApplicationLogger {
-            public readonly array $request_log_calls;
+            public private(set) array $request_log_calls;
 
             public function __construct()
             {
@@ -130,6 +134,9 @@ class StackdriverRequestLoggerTest extends TestCase
 
             public function logRequest(ServerGlobal $server = new ServerGlobal(), ?float $request_start_time = null): void
             {
+                if (isset($this->request_log_calls)) {
+                    throw new RuntimeException('logRequest called more than once');
+                }
                 $this->request_log_calls = get_defined_vars();
             }
         };
