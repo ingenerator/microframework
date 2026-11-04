@@ -18,13 +18,13 @@ class FactoryFunction
      *   // Whereas this will throw an UnexpectedValueException
      *   $stdclass = FactoryFunction::call(fn() => new DateTimeImmutable, stdClass::class)
      *
-     * @psalm-template T
+     * @template T of object
      *
-     * @psalm-param callable():T $callable
-     * @psalm-param class-string<T> $expect_class
-     * @psalm-param array $arguments that will be passed to the function
+     * @param callable():T $factory
+     * @param class-string<T> $expect_class
+     * @param array<mixed> $arguments that will be passed to the function
      *
-     * @psalm-return T
+     * @return T
      */
     public static function call(callable $factory, string $expect_class, array $arguments = []): object
     {
