@@ -22,13 +22,12 @@ class FactoryFunction
      *
      * @param callable():T $factory
      * @param class-string<T> $expect_class
-     * @param array<mixed> $arguments that will be passed to the function
      *
      * @return T
      */
-    public static function call(callable $factory, string $expect_class, array $arguments = []): object
+    public static function call(callable $factory, string $expect_class): object
     {
-        $object = $factory(...$arguments);
+        $object = $factory();
 
         if (!$object instanceof $expect_class) {
             throw new UnexpectedValueException(

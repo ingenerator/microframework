@@ -3,9 +3,7 @@
 namespace test\unit;
 
 use DateTimeImmutable;
-use DateTimeZone;
 use Ingenerator\MicroFramework\FactoryFunction;
-use Ingenerator\PHPUtils\DateTime\DateString;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use UnexpectedValueException;
@@ -16,19 +14,6 @@ class FactoryFunctionTest extends TestCase
     {
         $instance = new stdClass();
         $this->assertSame($instance, FactoryFunction::call(fn () => $instance, stdClass::class));
-    }
-
-    public function testItOptionallyCallsFunctionWithProvidedArgs()
-    {
-        $result = FactoryFunction::call(
-            fn ($date, $timezone) => new DateTimeImmutable($date, $timezone),
-            DateTimeImmutable::class,
-            [
-                '2024-03-01 08:23:20',
-                new DateTimeZone('Europe/Paris'),
-            ]
-        );
-        $this->assertSame('2024-03-01T08:23:20.000000+01:00', DateString::isoMS($result));
     }
 
     public function testItAllowsFactoryToReturnSubclass()

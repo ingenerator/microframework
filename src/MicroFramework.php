@@ -78,7 +78,7 @@ class MicroFramework
                 : ServerRequest::fromGlobals();
 
             // Hand off to the application for execution
-            $response = FactoryFunction::call($handler_factory, RequestHandler::class, [$logger])
+            $response = FactoryFunction::call(fn () => $handler_factory($logger), RequestHandler::class)
                 ->handle($request);
 
             // Render the application result

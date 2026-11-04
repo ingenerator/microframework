@@ -1,6 +1,7 @@
 
 ### Unreleased
 
+* [BREAKING]: FactoryFunction::call() no longer accepts or passes arguments to the callable.
 * [Internal] Bump dev dependencies
 * Require PHP 8.5
 * Require ingenerator/php-utils version 3
