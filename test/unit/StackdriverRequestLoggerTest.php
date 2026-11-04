@@ -2,9 +2,11 @@
 
 namespace test\unit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Ingenerator\MicroFramework\RequestLogger;
 use Ingenerator\MicroFramework\StackdriverRequestLogger;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
+use Ingenerator\PHPUtils\Superglobals\ServerGlobal;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\Test\TestLogger;
 
@@ -41,9 +43,7 @@ class StackdriverRequestLoggerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provider_calculate_request_start
-     */
+    #[DataProvider('provider_calculate_request_start')]
     public function test_it_calculates_request_start_time_from_elapsed_high_res_time(
         int|float $hrtime_start,
         int|float $hrtime_now,
@@ -56,8 +56,8 @@ class StackdriverRequestLoggerTest extends TestCase
         $subject->logRequest($logger, $hrtime_start);
 
         $this->assertSame(
-            ['server' => $_SERVER, 'request_start_time' => $expect_start_time],
-            $logger->request_log_calls
+            $expect_start_time,
+            $logger->request_log_calls['request_start_time']
         );
     }
 
@@ -127,7 +127,7 @@ class StackdriverRequestLoggerTest extends TestCase
 
             public function __construct() { }
 
-            public function logRequest(?array $server, ?float $request_start_time = null): void
+            public function logRequest(ServerGlobal $server = new ServerGlobal(), ?float $request_start_time = null): void
             {
                 $this->request_log_calls = get_defined_vars();
             }

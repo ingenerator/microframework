@@ -2,6 +2,7 @@
 
 namespace test\blackbox;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use GuzzleHttp\RequestOptions;
 
 class HttpHeadersTest extends BaseBlackboxTestCase
@@ -62,9 +63,7 @@ class HttpHeadersTest extends BaseBlackboxTestCase
         ];
     }
 
-    /**
-     * @dataProvider provider_headers
-     */
+    #[DataProvider('provider_headers')]
     public function test_it_returns_expected_headers(array $specified_headers, array $expected_headers)
     {
         $response = $this->guzzle->post(

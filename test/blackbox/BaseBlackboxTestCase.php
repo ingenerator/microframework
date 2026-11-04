@@ -2,6 +2,7 @@
 
 namespace test\blackbox;
 
+use UnexpectedValueException;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Assert;
@@ -76,7 +77,7 @@ class BaseBlackboxTestCase extends TestCase
     {
         // https://datatracker.ietf.org/doc/html/rfc3164
         if ( ! preg_match('/^<\d+>\w+\s+\d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
-            throw new \UnexpectedValueException('Unexpected log line format: `'.$line.'`');
+            throw new UnexpectedValueException('Unexpected log line format: `'.$line.'`');
         }
 
         return $matches[1];

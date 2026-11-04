@@ -35,8 +35,8 @@ class DefaultStackdriverLoggerProvider implements LoggerProvider
     {
         return [
             DefaultLogMetadata::serviceContext($this->service_name, $this->version_file_path),
-            DefaultLogMetadata::requestTrace($_SERVER),
-            DefaultLogMetadata::httpContext($_SERVER),
+            DefaultLogMetadata::requestTrace(),
+            DefaultLogMetadata::httpContext(),
         ];
     }
 

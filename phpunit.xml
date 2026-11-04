@@ -13,19 +13,18 @@
          displayDetailsOnTestsThatTriggerErrors="true"
          displayDetailsOnTestsThatTriggerNotices="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
-         cacheDirectory=".phpunit.cache"
->
-    <testsuites>
-        <testsuite name="integration">
-            <directory>test/integration</directory>
-        </testsuite>
-        <testsuite name="unit">
-            <directory>test/unit</directory>
-        </testsuite>
-        <testsuite name="blackbox">
-            <directory>test/blackbox</directory>
-        </testsuite>
-    </testsuites>
-    <source/>
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.4/phpunit.xsd"
+         cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="integration">
+      <directory>test/integration</directory>
+    </testsuite>
+    <testsuite name="unit">
+      <directory>test/unit</directory>
+    </testsuite>
+    <testsuite name="blackbox">
+      <directory>test/blackbox</directory>
+    </testsuite>
+  </testsuites>
+  <source/>
 </phpunit>

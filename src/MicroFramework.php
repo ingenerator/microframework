@@ -16,7 +16,6 @@ use function date_default_timezone_set;
 use function get_class;
 use function header;
 use function headers_sent;
-use function http_response_code;
 use function ob_get_clean;
 use function ob_get_level;
 use function set_error_handler;
@@ -166,8 +165,7 @@ class MicroFramework
     {
         if ( ! headers_sent()) {
             // We can't send these if they've already been sent...
-            http_response_code(500);
-            header('Content-Type: text/plain');
+            header('Content-Type: text/plain', response_code: 500);
         }
         echo "Unexpected fatal error\n";
     }

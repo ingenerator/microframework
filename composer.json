@@ -4,15 +4,16 @@
   "homepage": "https://github.com/ingenerator/microframework",
   "type": "library",
   "require": {
-    "php": "~8.4.0",
-    "ingenerator/php-utils": "^2.0",
-    "guzzlehttp/psr7": "^2.7"
+    "php": "~8.5.0",
+    "ingenerator/php-utils": "^3.0",
+    "guzzlehttp/psr7": "^2.7 | ^3.2"
   },
   "require-dev": {
     "fig/log-test": "^1.1",
-    "guzzlehttp/guzzle": "^7.9.1",
-    "phpunit/phpunit": "^10.5.28",
-    "symfony/filesystem": "^7.1.2"
+    "guzzlehttp/guzzle": "^7.9.1 | ^8.3",
+    "phpunit/phpunit": "^13.4",
+    "rector/rector": "2.8.4",
+    "symfony/filesystem": "^8.1"
   },
   "license": "BSD-3-Clause",
   "autoload": {

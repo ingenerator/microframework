@@ -9,12 +9,17 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    name: Run tests
+    name: Run tests (guzzle/psr7 ${{matrix.guzzle-psr-version}})
+    strategy:
+      fail-fast: false
+      matrix:
+        guzzle-psr-version: ['^2', '^3']
+
     steps:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: 8.4
+        php-version: 8.5
         tools: composer:v2
 
     - name: Checkout
@@ -23,7 +28,7 @@ jobs:
         show-progress: false
 
     - name: Composer install
-      uses: ingenerator/github-composite-actions/cached-composer-install@v1
+      run: composer update --with "guzzlehttp/psr7:${{ matrix.guzzle-psr-version }}"
 
     - name: Run unit tests
       run: |
