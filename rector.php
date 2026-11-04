@@ -12,4 +12,7 @@ return RectorConfig::configure()
     ->withSkipPath(__DIR__.'/test/blackbox/implementation/htdocs/dynamic')
     ->withComposerBased(phpunit: true)
     ->withPhpSets()
+    ->withPreparedSets(
+        codeQuality: true
+    )
     ->withImportNames();
