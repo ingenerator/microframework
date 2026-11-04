@@ -1,50 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\unit;
 
-use DateTimeZone;
 use DateTimeImmutable;
 use Ingenerator\MicroFramework\FactoryFunction;
-use Ingenerator\PHPUtils\DateTime\DateString;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use UnexpectedValueException;
 
-class FactoryFunctionTest extends TestCase
+final class FactoryFunctionTest extends TestCase
 {
-
-    public function test_it_calls_function_and_returns_result()
+    public function testItCallsFunctionAndReturnsResult(): void
     {
         $instance = new stdClass();
-        $this->assertSame($instance, FactoryFunction::call(fn () => $instance, stdClass::class));
+        $this->assertSame($instance, FactoryFunction::call(fn (): stdClass => $instance, stdClass::class));
     }
 
-    public function test_it_optionally_calls_function_with_provided_args()
-    {
-        $result = FactoryFunction::call(
-            fn ($date, $timezone) => new DateTimeImmutable($date, $timezone),
-            DateTimeImmutable::class,
-            [
-                '2024-03-01 08:23:20',
-                new DateTimeZone('Europe/Paris'),
-            ]
-        );
-        $this->assertSame('2024-03-01T08:23:20.000000+01:00', DateString::isoMS($result));
-    }
-
-    public function test_it_allows_factory_to_return_subclass()
+    public function testItAllowsFactoryToReturnSubclass(): void
     {
         $instance = new class extends DateTimeImmutable { };
-        $this->assertSame($instance, FactoryFunction::call(fn () => $instance, DateTimeImmutable::class));
-
+        $this->assertSame($instance, FactoryFunction::call(fn (): object => $instance, DateTimeImmutable::class));
     }
 
-    public function test_it_throws_if_returned_value_is_not_expected_type()
+    public function testItThrowsIfReturnedValueIsNotExpectedType(): void
     {
-        $fn = fn () => new stdClass();
+        $fn = fn (): stdClass => new stdClass();
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessageIsOrContains('Factory for DateTimeImmutable incorrectly returned stdClass');
         FactoryFunction::call($fn, DateTimeImmutable::class);
     }
-
 }

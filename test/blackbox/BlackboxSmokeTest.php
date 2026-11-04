@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\blackbox;
 
-class BlackboxSmokeTest extends BaseBlackboxTestCase
+final class BlackboxSmokeTest extends BaseBlackboxTestCase
 {
-    public function test_test_subject_responds_from_default_handler()
+    public function testTestSubjectRespondsFromDefaultHandler(): void
     {
         $this->assertResponseMatches(
             200,
@@ -12,5 +14,4 @@ class BlackboxSmokeTest extends BaseBlackboxTestCase
             $this->guzzle->get('/'),
         );
     }
-
 }

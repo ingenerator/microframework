@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\blackbox;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use GuzzleHttp\RequestOptions;
+use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class HttpHeadersTest extends BaseBlackboxTestCase
+final class HttpHeadersTest extends BaseBlackboxTestCase
 {
     private static string $handler_url;
 
@@ -13,58 +16,63 @@ class HttpHeadersTest extends BaseBlackboxTestCase
     {
         parent::setUpBeforeClass();
         self::$handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
-            <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            <<<'PHP_WRAP'
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     $body = \Ingenerator\PHPUtils\StringEncoding\JSON::decodeArray($request->getBody()->getContents());
                     return new Response(202, headers: $body, body: 'Headers from POST');
                 }
             }
-            PHP,
+            PHP_WRAP,
         );
     }
 
-    public static function provider_headers(): array
+    /**
+     * @return Iterator<string, array{array<string, string>, array<string, list<string>>}>
+     */
+    public static function provider_headers(): Iterator
     {
-        return [
-            'no headers specified, just the defaults' => [
-                [],
-                [
-                    'Content-Length' => ['17'],
-                    'Content-Type' => ['text/html; charset=UTF-8'],
-                ],
+        yield 'no headers specified, just the defaults' => [
+            [],
+            [
+                'Content-Length' => ['17'],
+                'Content-Type' => ['text/html; charset=UTF-8'],
             ],
-            'custom content type' => [
-                ['Content-Type' => 'application/json'],
-                [
-                    'Content-Length' => ['17'],
-                    'Content-Type' => ['application/json'],
-                ],
+        ];
+        yield 'custom content type' => [
+            ['Content-Type' => 'application/json'],
+            [
+                'Content-Length' => ['17'],
+                'Content-Type' => ['application/json'],
             ],
-            'custom content type in different case' => [
-                ['content-type' => 'application/json'],
-                [
-                    'Content-Length' => ['17'],
-                    'Content-Type' => ['application/json'],
-                ],
+        ];
+        yield 'custom content type in different case' => [
+            ['content-type' => 'application/json'],
+            [
+                'Content-Length' => ['17'],
+                'Content-Type' => ['application/json'],
             ],
-            'custom headers' => [
-                [
-                    'Content-Type' => 'application/json',
-                    'X-My-Custom' => 'Value',
-                ],
-                [
-                    'Content-Length' => ['17'],
-                    'Content-Type' => ['application/json'],
-                    'X-My-Custom' => ['Value'],
-                ],
+        ];
+        yield 'custom headers' => [
+            [
+                'Content-Type' => 'application/json',
+                'X-My-Custom' => 'Value',
+            ],
+            [
+                'Content-Length' => ['17'],
+                'Content-Type' => ['application/json'],
+                'X-My-Custom' => ['Value'],
             ],
         ];
     }
 
+    /**
+     * @param array<string,string> $specified_headers
+     * @param array<string,list<string>> $expected_headers
+     */
     #[DataProvider('provider_headers')]
-    public function test_it_returns_expected_headers(array $specified_headers, array $expected_headers)
+    public function testItReturnsExpectedHeaders(array $specified_headers, array $expected_headers): void
     {
         $response = $this->guzzle->post(
             self::$handler_url,
@@ -82,7 +90,7 @@ class HttpHeadersTest extends BaseBlackboxTestCase
         $this->assertSame($expected_headers, $all_headers);
     }
 
-    public function test_it_gives_error_on_unsupported_use_of_duplicate_output_headers()
+    public function testItGivesErrorOnUnsupportedUseOfDuplicateOutputHeaders(): void
     {
         // We can't support multiples for the same header because we can't reliably guess whether to pass
         // replace => true or replace => false  into the `header()` call and it's more important that we
@@ -99,5 +107,4 @@ class HttpHeadersTest extends BaseBlackboxTestCase
 
         $this->assertResponseMatches(500, "Unexpected fatal error\n", $response);
     }
-
 }

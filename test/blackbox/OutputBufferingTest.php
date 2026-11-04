@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace blackbox;
 
 use test\blackbox\BaseBlackboxTestCase;
 
-class OutputBufferingTest extends BaseBlackboxTestCase
+final class OutputBufferingTest extends BaseBlackboxTestCase
 {
-
-    public function test_it_handles_error_even_if_output_began_before_framework()
+    public function testItHandlesErrorEvenIfOutputBeganBeforeFramework(): void
     {
         $handler_url = $this->provisionDynamicHandler(
             <<<'PHP'
@@ -45,11 +46,11 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function test_it_returns_error_without_output_if_any_code_writes_output_during_request_handling()
+    public function testItReturnsErrorWithoutOutputIfAnyCodeWritesOutputDuringRequestHandling(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     echo "You did something";
@@ -66,11 +67,11 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function test_it_treats_as_error_if_user_leaves_output_buffers_open()
+    public function testItTreatsAsErrorIfUserLeavesOutputBuffersOpen(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     ob_start();
@@ -88,11 +89,11 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function test_it_treats_as_error_if_user_flushes_output_buffers()
+    public function testItTreatsAsErrorIfUserFlushesOutputBuffers(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     ob_start();
@@ -111,11 +112,11 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function test_it_does_not_treat_as_error_if_user_handles_output_buffering_correctly()
+    public function testItDoesNotTreatAsErrorIfUserHandlesOutputBufferingCorrectly(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     ob_start();
@@ -133,11 +134,11 @@ class OutputBufferingTest extends BaseBlackboxTestCase
         );
     }
 
-    public function test_it_does_not_treat_as_error_if_user_handles_output_buffering_correctly_without_rendering()
+    public function testItDoesNotTreatAsErrorIfUserHandlesOutputBufferingCorrectlyWithoutRendering(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     ob_start();
@@ -155,5 +156,4 @@ class OutputBufferingTest extends BaseBlackboxTestCase
             $this->guzzle->get($handler_url),
         );
     }
-
 }

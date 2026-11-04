@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ingenerator\MicroFramework;
 
 use Psr\Log\LoggerInterface;
 
 /**
- * The LoggerProvider is responsible for providing a suitable PSR Logger and a compatible RequestLogger
+ * The LoggerProvider is responsible for providing a suitable PSR Logger and a compatible RequestLogger.
  *
  * It should be essentially impossible for these services to produce runtime errors under any
  * conditions. If they could produce errors, these must be handled & ideally logged internally.
@@ -15,9 +17,7 @@ use Psr\Log\LoggerInterface;
 interface LoggerProvider
 {
     /**
-     * Get a usable LoggerInterface - either by creating, or e.g. accessing from a DI container / singleton / factory etc
-     *
-     * @return LoggerInterface
+     * Get a usable LoggerInterface - either by creating, or e.g. accessing from a DI container / singleton / factory etc.
      */
     public function getLogger(): LoggerInterface;
 

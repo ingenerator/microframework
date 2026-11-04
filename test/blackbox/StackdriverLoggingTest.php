@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\blackbox;
 
 use Ingenerator\PHPUtils\StringEncoding\JSON;
 
-class StackdriverLoggingTest extends BaseBlackboxTestCase
+final class StackdriverLoggingTest extends BaseBlackboxTestCase
 {
-
     // Note, these tests are necessarily verbose and fairly tightly coupled to the code structure, because I think for
     // a blackbox test we should be as explicit as we can be about the detail of the log messages that are written -
     // but the log messages include filenames, line numbers, and other semi-dynamic content.
 
-    public function test_it_logs_requests_on_completion_in_stackdriver_format()
+    public function testItLogsRequestsOnCompletionInStackdriverFormat(): void
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'
@@ -22,7 +23,6 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
             use Ingenerator\MicroFramework\RequestHandler;
             use Psr\Http\Message\ResponseInterface;
             use Psr\Http\Message\ServerRequestInterface;
-            use Psr\Log\LoggerInterface;
 
             require_once('/var/www/vendor/autoload.php');
 
@@ -36,7 +36,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     service_name: 'my-service',
                     version_file_path: $version_file_path,
                 ),
-                handler_factory: fn (LoggerInterface $logger) => new class implements RequestHandler {
+                handler_factory: fn () => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         return new Response(203, body: 'OK');
@@ -57,17 +57,22 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         $request_log_msg = JSON::decodeArray($messages[0]);
 
         // Assert things that are dynamic and can't be exactly asserted
+        $this->assertIsArray($request_log_msg['httpRequest']);
+        $this->assertIsString($request_log_msg['httpRequest']['latency']);
         $this->assertMatchesRegularExpression('/^0.00\d{4}s$/', $request_log_msg['httpRequest']['latency']);
         unset($request_log_msg['httpRequest']['latency']);
 
+        $this->assertIsArray($request_log_msg['context']);
+        $this->assertIsString($request_log_msg['context']['req']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $request_log_msg['context']['req']);
         unset($request_log_msg['context']['req']);
 
+        $this->assertIsString($request_log_msg['logging.googleapis.com/trace']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $request_log_msg['logging.googleapis.com/trace']);
         unset($request_log_msg['logging.googleapis.com/trace']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
+        $this->assertEqualsWithDelta(2.0, $request_log_msg['context']['mem_mb'], 0.5);
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(
@@ -77,7 +82,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                 'httpRequest' => [
                     'requestMethod' => 'GET',
                     'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                    'remoteIp' => gethostbyname(gethostname()),
+                    'remoteIp' => $this->getLocalIp(),
                     'status' => 203,
                     'userAgent' => 'My Test UA',
                     // 'latency' => '0.002811s',
@@ -90,13 +95,13 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'service' => 'my-service',
                     'version' => 'ab28372',
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
             ],
             $request_log_msg,
         );
     }
 
-    public function test_it_logs_uncaught_exceptions_and_request_in_stackdriver_format()
+    public function testItLogsUncaughtExceptionsAndRequestInStackdriverFormat(): void
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'
@@ -107,7 +112,6 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
             use Ingenerator\MicroFramework\RequestHandler;
             use Psr\Http\Message\ResponseInterface;
             use Psr\Http\Message\ServerRequestInterface;
-            use Psr\Log\LoggerInterface;
 
             require_once('/var/www/vendor/autoload.php');
             // Note: defining this as a named class to make log output assertions easier to follow (anonymous classes
@@ -125,7 +129,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     service_name: 'my-service',
                     version_file_path: '/var/www/version.php',
                 ),
-                handler_factory: fn (LoggerInterface $logger) => new MyHandler($logger),
+                handler_factory: fn () => new MyHandler(),
             );
             PHP,
         );
@@ -143,7 +147,10 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         $request_log_msg = JSON::decodeArray($messages[1]);
 
         // Assert the things that vary and can't easily be asserted directly
+        $this->assertIsArray($error_log_msg['context']);
+        $this->assertIsString($error_log_msg['context']['req']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $error_log_msg['context']['req']);
+        $this->assertIsArray($request_log_msg['context']);
         $this->assertSame(
             $error_log_msg['context']['req'],
             $request_log_msg['context']['req'],
@@ -152,6 +159,8 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($error_log_msg['context']['req']);
         unset($request_log_msg['context']['req']);
 
+        $this->assertIsString($error_log_msg['logging.googleapis.com/trace']);
+        $this->assertIsString($request_log_msg['logging.googleapis.com/trace']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $request_log_msg['logging.googleapis.com/trace']);
         $this->assertSame(
             $error_log_msg['logging.googleapis.com/trace'],
@@ -161,17 +170,19 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($error_log_msg['logging.googleapis.com/trace']);
         unset($request_log_msg['logging.googleapis.com/trace']);
 
+        $this->assertIsArray($request_log_msg['httpRequest']);
+        $this->assertIsString($request_log_msg['httpRequest']['latency']);
         $this->assertMatchesRegularExpression('/^0.00\d{4}s$/', $request_log_msg['httpRequest']['latency']);
         unset($request_log_msg['httpRequest']['latency']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
+        $this->assertEqualsWithDelta(2.0, $request_log_msg['context']['mem_mb'], 0.5);
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(
             [
                 'severity' => 'EMERGENCY',
-                'message' => 'Uncaught RuntimeException: I broke at /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php:/var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php',
+                'message' => 'Uncaught RuntimeException: I broke at /var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php:/var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php',
                 '@ingenType' => 'app',
                 'serviceContext' => [
                     'service' => 'my-service',
@@ -182,38 +193,38 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'httpRequest' => [
                         'requestMethod' => 'POST',
                         'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                        'remoteIp' => gethostbyname(gethostname()),
+                        'remoteIp' => $this->getLocalIp(),
                     ],
                     'reportLocation' => [
                         'filePath' => '/var/www/vendor/ingenerator/microframework/src/MicroFramework.php',
-                        'lineNumber' => 152,
+                        'lineNumber' => 166,
                         'functionName' => 'Ingenerator\MicroFramework\MicroFramework->logUncaughtException',
                     ],
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
                 'exception' => [
                     'class' => 'RuntimeException',
                     'msg' => 'I broke',
                     'code' => 0,
-                    'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php',
-                    'line' => 17,
+                    'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php',
+                    'line' => 16,
                     'trace' => <<<'TEXT'
-                        #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(80): MyHandler->handle()
-                        #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php(21): Ingenerator\MicroFramework\MicroFramework->execute()
+                        #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(82): MyHandler->handle()
+                        #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php(20): Ingenerator\MicroFramework\MicroFramework->execute()
                         #2 {main}
                         TEXT,
                 ],
                 'logging.googleapis.com/sourceLocation' => [
                     'file' => '/var/www/vendor/ingenerator/microframework/src/MicroFramework.php',
-                    'line' => 152,
+                    'line' => 166,
                     'function' => 'Ingenerator\MicroFramework\MicroFramework->logUncaughtException',
                 ],
                 '@type' => 'type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent',
                 'stack_trace' => <<<'TEXT'
-                    PHP Warning: RuntimeException: I broke in /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php:17
+                    PHP Warning: RuntimeException: I broke in /var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php:16
                     Stack trace:
-                    #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(80): MyHandler->handle()
-                    #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php(21): Ingenerator\MicroFramework\MicroFramework->execute()
+                    #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(82): MyHandler->handle()
+                    #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php(20): Ingenerator\MicroFramework\MicroFramework->execute()
                     #2 {main}
                     TEXT,
             ],
@@ -227,7 +238,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                 'httpRequest' => [
                     'requestMethod' => 'POST',
                     'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                    'remoteIp' => gethostbyname(gethostname()),
+                    'remoteIp' => $this->getLocalIp(),
                     'status' => 500,
                     'userAgent' => 'My Test UA',
                     // 'latency' => '0.002811s',
@@ -240,19 +251,20 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'service' => 'my-service',
                     'version' => 'a-version',
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
             ],
             $request_log_msg,
         );
     }
 
-    public function test_it_outputs_custom_app_logs_in_stackdriver_format()
+    public function testItOutputsCustomAppLogsInStackdriverFormat(): void
     {
         $handler_url = self::provisionDynamicHandler(
             <<<'PHP'
             <?php
             use GuzzleHttp\Psr7\Response;
             use Ingenerator\MicroFramework\DefaultStackdriverLoggerProvider;
+            use Ingenerator\MicroFramework\HandlerFactoryArgs;
             use Ingenerator\MicroFramework\MicroFramework;
             use Ingenerator\MicroFramework\RequestHandler;
             use Psr\Http\Message\ResponseInterface;
@@ -278,14 +290,14 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     service_name: 'my-service',
                     version_file_path: '/var/www/version.php',
                 ),
-                handler_factory: fn (LoggerInterface $logger) => new MyHandler($logger),
+                handler_factory: fn (HandlerFactoryArgs $args) => new MyHandler($args->logger),
             );
             PHP,
         );
 
         $this->assertResponseMatches(
             200,
-            "OK",
+            'OK',
             $this->guzzle->post($handler_url, ['headers' => ['User-Agent' => 'My Test UA']]),
         );
 
@@ -296,7 +308,10 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         $request_log_msg = JSON::decodeArray($messages[1]);
 
         // Assert the things that vary and can't easily be asserted directly
+        $this->assertIsArray($error_log_msg['context']);
+        $this->assertIsString($error_log_msg['context']['req']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $error_log_msg['context']['req']);
+        $this->assertIsArray($request_log_msg['context']);
         $this->assertSame(
             $error_log_msg['context']['req'],
             $request_log_msg['context']['req'],
@@ -305,6 +320,8 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($error_log_msg['context']['req']);
         unset($request_log_msg['context']['req']);
 
+        $this->assertIsString($error_log_msg['logging.googleapis.com/trace']);
+        $this->assertIsString($request_log_msg['logging.googleapis.com/trace']);
         $this->assertMatchesRegularExpression('/^\w+\.\w+$/', $request_log_msg['logging.googleapis.com/trace']);
         $this->assertSame(
             $error_log_msg['logging.googleapis.com/trace'],
@@ -314,11 +331,13 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($error_log_msg['logging.googleapis.com/trace']);
         unset($request_log_msg['logging.googleapis.com/trace']);
 
+        $this->assertIsArray($request_log_msg['httpRequest']);
+        $this->assertIsString($request_log_msg['httpRequest']['latency']);
         $this->assertMatchesRegularExpression('/^0.00\d{4}s$/', $request_log_msg['httpRequest']['latency']);
         unset($request_log_msg['httpRequest']['latency']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
+        $this->assertEqualsWithDelta(2.0, $request_log_msg['context']['mem_mb'], 0.5);
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(
@@ -335,13 +354,13 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'httpRequest' => [
                         'requestMethod' => 'POST',
                         'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                        'remoteIp' => gethostbyname(gethostname()),
+                        'remoteIp' => $this->getLocalIp(),
                     ],
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
                 'logging.googleapis.com/sourceLocation' => [
-                    'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_0ba32a129fbc45c0d394a95f76d7bdf405c84692/index.php',
-                    'line' => 18,
+                    'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_b6ab65fbb5280907f86e2517cfa96312e743341d/index.php',
+                    'line' => 19,
                     'function' => 'MyHandler->handle',
                 ],
                 'custom_context' => [
@@ -358,7 +377,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                 'httpRequest' => [
                     'requestMethod' => 'POST',
                     'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                    'remoteIp' => gethostbyname(gethostname()),
+                    'remoteIp' => $this->getLocalIp(),
                     'status' => 200,
                     'userAgent' => 'My Test UA',
                     // 'latency' => '0.002811s',
@@ -371,10 +390,9 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'service' => 'my-service',
                     'version' => 'a-version',
                 ],
-                //'logging.googleapis.com/trace' => '66991537308e16.07573263',
+                // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
             ],
             $request_log_msg,
         );
     }
-
 }

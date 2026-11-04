@@ -3,25 +3,24 @@
 namespace Ingenerator\MicroFramework;
 
 use Ingenerator\PHPUtils\Logging\DefaultLogMetadata;
+use Ingenerator\PHPUtils\Logging\LogMetadataProvider;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use Psr\Log\LoggerInterface;
 
 class DefaultStackdriverLoggerProvider implements LoggerProvider
 {
-
     public function __construct(
         protected readonly string $service_name,
         protected readonly string $version_file_path,
         protected readonly string $log_destination = 'php://stdout',
     ) {
-
     }
 
     public function getLogger(): LoggerInterface
     {
-        if ( ! StackdriverApplicationLogger::isInitialised()) {
+        if (!StackdriverApplicationLogger::isInitialised()) {
             StackdriverApplicationLogger::initialise(
-                fn () => new StackdriverApplicationLogger(
+                fn (): StackdriverApplicationLogger => new StackdriverApplicationLogger(
                     $this->log_destination,
                     ...$this->getMetadataProviders(),
                 )
@@ -31,6 +30,9 @@ class DefaultStackdriverLoggerProvider implements LoggerProvider
         return StackdriverApplicationLogger::instance();
     }
 
+    /**
+     * @return list<LogMetadataProvider|array<string,mixed>>
+     */
     protected function getMetadataProviders(): array
     {
         return [

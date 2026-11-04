@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\blackbox;
 
-use UnexpectedValueException;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
+use UnexpectedValueException;
 
 class BaseBlackboxTestCase extends TestCase
 {
@@ -40,7 +42,12 @@ class BaseBlackboxTestCase extends TestCase
     private function getTestSubjectBaseUrl(): string
     {
         $subject_url = getenv('TEST_SUBJECT_BASE_URI');
-        Assert::assertNotEmpty($subject_url, 'Expect an environment variable TEST_SUBJECT_BASE_URI');
+        if (!is_string($subject_url)) {
+            throw new RuntimeException('Expect an environment variable TEST_SUBJECT_BASE_URI as a string');
+        }
+        if (empty($subject_url)) {
+            throw new RuntimeException('Expect an environment variable TEST_SUBJECT_BASE_URI not to be empty string');
+        }
 
         return $subject_url;
     }
@@ -55,28 +62,36 @@ class BaseBlackboxTestCase extends TestCase
         }
     }
 
+    /**
+     * @return list<string>
+     */
     protected function getTestSubjectLogEntriesDuringTest(): array
     {
         // Wait a moment for logs to be written - they aren't always absolutely immediate
         usleep(100_000);
 
-        if ( ! is_file(self::$test_subject_logs_file)) {
+        if (!is_file(self::$test_subject_logs_file)) {
             return [];
         }
 
         // Each line in the file is in syslog RFC3164 format. The details of the message header not relevant to us, we
         // are only using syslog format to be able to capture the underlying container STDOUT/STDERR in a docker compose
         // environment. So we just split the lines on the end of the HEADER and return the CONTENT
+        $lines = file(self::$test_subject_logs_file, FILE_IGNORE_NEW_LINES);
+        if ($lines === false) {
+            throw new RuntimeException('Could not read '.self::$test_subject_logs_file);
+        }
+
         return array_map(
             self::extractSyslogRFC3164MessageBody(...),
-            file(self::$test_subject_logs_file, FILE_IGNORE_NEW_LINES),
+            $lines,
         );
     }
 
     private function extractSyslogRFC3164MessageBody(string $line): string
     {
         // https://datatracker.ietf.org/doc/html/rfc3164
-        if ( ! preg_match('/^<\d+>\w+\s+\d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
+        if (!preg_match('/^<\d+>\w+\s+\d+ \d\d:\d\d:\d\d [^ ]+ \w+\[\w+\]:(.+)$/', $line, $matches)) {
             throw new UnexpectedValueException('Unexpected log line format: `'.$line.'`');
         }
 
@@ -86,7 +101,7 @@ class BaseBlackboxTestCase extends TestCase
     protected function assertResponseMatches(
         int $expect_code,
         string $expect_body,
-        ResponseInterface $response
+        ResponseInterface $response,
     ): void {
         $this->assertSame(
             [
@@ -100,12 +115,13 @@ class BaseBlackboxTestCase extends TestCase
         );
     }
 
-    protected static function provisionDynamicHandlerFactoryWithDefaultBootstrap(string $handler_factory_implementation
+    protected static function provisionDynamicHandlerFactoryWithDefaultBootstrap(string $handler_factory_implementation,
     ): string {
         $template = <<<'PHP'
             <?php
             use GuzzleHttp\Psr7\Response;
             use Ingenerator\MicroFramework\DefaultStackdriverLoggerProvider;
+            use Ingenerator\MicroFramework\HandlerFactoryArgs;
             use Ingenerator\MicroFramework\MicroFramework;
             use Ingenerator\MicroFramework\RequestHandler;
             use Psr\Http\Message\ResponseInterface;
@@ -139,4 +155,13 @@ class BaseBlackboxTestCase extends TestCase
         return '/dynamic/'.$id.'/';
     }
 
+    final protected function getLocalIp(): string
+    {
+        $hostname = gethostname();
+        if ($hostname === false) {
+            throw new RuntimeException('Could not get hostname');
+        }
+
+        return gethostbyname($hostname);
+    }
 }

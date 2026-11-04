@@ -1,23 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\unit;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Ingenerator\MicroFramework\RequestLogger;
 use Ingenerator\MicroFramework\StackdriverRequestLogger;
 use Ingenerator\PHPUtils\Logging\StackdriverApplicationLogger;
 use Ingenerator\PHPUtils\Superglobals\ServerGlobal;
+use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\Test\TestLogger;
+use RuntimeException;
 
-class StackdriverRequestLoggerTest extends TestCase
+final class StackdriverRequestLoggerTest extends TestCase
 {
-    public function test_it_is_initialisable_request_logger()
+    public function testItIsInitialisableRequestLogger(): void
     {
         $this->assertInstanceOf(RequestLogger::class, $this->newSubject());
     }
 
-    public function test_its_log_request_logs_an_exception_and_returns_on_unknown_logger_type()
+    public function testItsLogRequestLogsAnExceptionAndReturnsOnUnknownLoggerType(): void
     {
         $logger = new TestLogger();
         $this->newSubject()->logRequest($logger, 0);
@@ -25,31 +29,32 @@ class StackdriverRequestLoggerTest extends TestCase
         $this->assertTrue($logger->hasErrorThatContains('Could not log request details - got a '.$logger::class));
     }
 
-    public static function provider_calculate_request_start(): array
+    /**
+     * @return Iterator<string, array<string, float|int>>
+     */
+    public static function provider_calculate_request_start(): Iterator
     {
-        return [
-            '64-bit with int hrtime' => [
-                'hrtime_start' => 2993548241208,
-                'hrtime_now' => 2993548244583,
-                'microtime_now' => 1709456239.781800000,
-                'expect_start_time' => 1709456239.781796625,
-            ],
-            '32-bit with float hrtime (and longer latency)' => [
-                'hrtime_start' => 2992348244583.0,
-                'hrtime_now' => 2993548244583.0,
-                'microtime_now' => 1709456239.7818,
-                'expect_start_time' => 1709456238.5818,
-            ],
+        yield '64-bit with int hrtime' => [
+            'hrtime_start' => 2993548241208,
+            'hrtime_now' => 2993548244583,
+            'microtime_now' => 1709456239.781800000,
+            'expect_start_time' => 1709456239.781796625,
+        ];
+        yield '32-bit with float hrtime (and longer latency)' => [
+            'hrtime_start' => 2992348244583.0,
+            'hrtime_now' => 2993548244583.0,
+            'microtime_now' => 1709456239.7818,
+            'expect_start_time' => 1709456238.5818,
         ];
     }
 
     #[DataProvider('provider_calculate_request_start')]
-    public function test_it_calculates_request_start_time_from_elapsed_high_res_time(
+    public function testItCalculatesRequestStartTimeFromElapsedHighResTime(
         int|float $hrtime_start,
         int|float $hrtime_now,
         float $microtime_now,
         float $expect_start_time,
-    ) {
+    ): void {
         $subject = $this->stubSubjectWithHrTimeAndMicrotime($hrtime_now, $microtime_now);
         $logger = $this->makeLoggerSpy();
 
@@ -61,7 +66,7 @@ class StackdriverRequestLoggerTest extends TestCase
         );
     }
 
-    public function test_it_logs_sane_value_for_request_time_with_default_implementation()
+    public function testItLogsSaneValueForRequestTimeWithDefaultImplementation(): void
     {
         $actual_start_microtime = microtime(true);
         $start_hrtime = hrtime(true);
@@ -90,10 +95,9 @@ class StackdriverRequestLoggerTest extends TestCase
         );
     }
 
-
     public function stubSubjectWithHrTimeAndMicrotime(
         float|int $hrtime_now,
-        float $microtime_now
+        float $microtime_now,
     ): StackdriverRequestLogger {
         /*
          * As we don't currently have a defined mock for hrtime, and it's not possible to use a callable as a default
@@ -120,15 +124,26 @@ class StackdriverRequestLoggerTest extends TestCase
         return $subject;
     }
 
+    /**
+     * @return StackdriverApplicationLogger&object{request_log_calls: array{server: ServerGlobal, request_start_time: ?float}}
+     */
     public function makeLoggerSpy(): StackdriverApplicationLogger
     {
         return new class extends StackdriverApplicationLogger {
-            public readonly array $request_log_calls;
+            /**
+             * @var array{server: ServerGlobal, request_start_time: ?float}
+             */
+            public private(set) array $request_log_calls;
 
-            public function __construct() { }
+            public function __construct()
+            {
+            }
 
             public function logRequest(ServerGlobal $server = new ServerGlobal(), ?float $request_start_time = null): void
             {
+                if (isset($this->request_log_calls)) {
+                    throw new RuntimeException('logRequest called more than once');
+                }
                 $this->request_log_calls = get_defined_vars();
             }
         };
@@ -138,6 +153,4 @@ class StackdriverRequestLoggerTest extends TestCase
     {
         return new StackdriverRequestLogger();
     }
-
-
 }

@@ -1,53 +1,57 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\blackbox;
 
+use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class ErrorHandlingTest extends BaseBlackboxTestCase
+final class ErrorHandlingTest extends BaseBlackboxTestCase
 {
-
-    public static function provider_error_handling(): array
+    /**
+     * @return Iterator<string, list<string>>
+     */
+    public static function provider_error_handling(): Iterator
     {
-        return [
-            'exception in handler factory' => [
-                <<<'PHP'
+        yield 'exception in handler factory' => [
+            <<<'PHP'
                 fn () => throw new RuntimeException('No handler')
                 PHP,
-            ],
-            'error in handler factory' => [
-                <<<'PHP'
+        ];
+        yield 'error in handler factory' => [
+            <<<'PHP'
                 fn () => ['no'=> 'thing']['undefined']
                 PHP,
-            ],
-            'factory does not return a handler instance' => [
-                <<<'PHP'
-                fn (LoggerInterface $logger) => new class extends stdClass {
+        ];
+        yield 'factory does not return a handler instance' => [
+            <<<'PHP'
+                fn () => new class extends stdClass {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         return new Response(200, body: 'Should not get here, it is the wrong instance type');
                     }
                 }
                 PHP,
-            ],
-            'factory references undefined class' => [
-                <<<'PHP'
-                fn (LoggerInterface $logger) => new \My\Undefined\RequestHandlerClass()
+        ];
+        yield 'factory references undefined class' => [
+            <<<'PHP'
+                fn () => new \My\Undefined\RequestHandlerClass()
                 PHP,
-            ],
-            'uncaught exception during handler' => [
-                <<<'PHP'
-                fn (LoggerInterface $logger) => new class implements RequestHandler {
+        ];
+        yield 'uncaught exception during handler' => [
+            <<<'PHP'
+                fn () => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         throw new \RuntimeException('You broke it');
                     }
                 }
                 PHP,
-            ],
-            'php error in handler' => [
-                <<<'PHP'
-                fn (LoggerInterface $logger) => new class implements RequestHandler {
+        ];
+        yield 'php error in handler' => [
+            <<<'PHP'
+                fn () => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         $map = ['no' => 'thing'];
@@ -55,10 +59,10 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
                     }
                 }
                 PHP,
-            ],
-            'TypeError in handler' => [
-                <<<'PHP'
-                fn (LoggerInterface $logger) => new class implements RequestHandler {
+        ];
+        yield 'TypeError in handler' => [
+            <<<'PHP'
+                fn () => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         return $this->doThings($request);
@@ -69,12 +73,11 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
                     }
                 }
                 PHP,
-            ],
         ];
     }
 
     #[DataProvider('provider_error_handling')]
-    public function test_it_captures_errors_and_exceptions(string $handler_code)
+    public function testItCapturesErrorsAndExceptions(string $handler_code): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap($handler_code);
 
@@ -84,5 +87,4 @@ class ErrorHandlingTest extends BaseBlackboxTestCase
             $this->guzzle->get($handler_url),
         );
     }
-
 }

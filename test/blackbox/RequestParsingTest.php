@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace test\blackbox;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Ingenerator\PHPUtils\StringEncoding\JSON;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class RequestParsingTest extends BaseBlackboxTestCase
+/**
+ * @phpstan-type TGuzzleRequestOptions array{form_params?: array<string, array<int|string>|scalar|null>, json?: mixed}
+ */
+final class RequestParsingTest extends BaseBlackboxTestCase
 {
     private static string $handler_url;
 
@@ -14,7 +19,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
         parent::setUpBeforeClass();
         self::$handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     return new Response(
@@ -32,6 +37,9 @@ class RequestParsingTest extends BaseBlackboxTestCase
         );
     }
 
+    /**
+     * @return array<string, array{string, TGuzzleRequestOptions, array{method: string, body: string, parsed_body: array<string, mixed>}}>
+     */
     public static function provider_request_bodies(): array
     {
         return [
@@ -106,12 +114,15 @@ class RequestParsingTest extends BaseBlackboxTestCase
                     'parsed_body' => [],
                 ],
             ],
-
         ];
     }
 
+    /**
+     * @param TGuzzleRequestOptions $options
+     * @param array{method: string, body: string, parsed_body: array<string, mixed>} $expect
+     */
     #[DataProvider('provider_request_bodies')]
-    public function test_it_can_receive_incoming_request_bodies_in_expected_formats($method, $options, $expect): void
+    public function testItCanReceiveIncomingRequestBodiesInExpectedFormats(string $method, array $options, array $expect): void
     {
         $response = $this->guzzle->request($method, self::$handler_url, $options);
         $received_payload = JSON::decodeArray($response->getBody()->getContents());
@@ -119,6 +130,9 @@ class RequestParsingTest extends BaseBlackboxTestCase
         $this->assertSame($expect, $received_payload);
     }
 
+    /**
+     * @return array<string, array{array<string, string|non-empty-array<string>>, array<string, list<string>>}>
+     */
     public static function provider_request_headers(): array
     {
         return [
@@ -126,7 +140,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
                 [],
                 [
                     'Host' => ['test_subject'],
-                    'User-Agent' => [__CLASS__],
+                    'User-Agent' => [self::class],
                 ],
             ],
             'with custom headers' => [
@@ -146,29 +160,33 @@ class RequestParsingTest extends BaseBlackboxTestCase
                 ],
                 [
                     'Host' => ['test_subject'],
-                    'User-Agent' => [__CLASS__],
+                    'User-Agent' => [self::class],
                     'X-My-Header' => ['test1, test2'],
                 ],
             ],
         ];
     }
 
+    /**
+     * @param array<string, string|non-empty-array<string>> $send_headers
+     * @param array<string, list<string>> $expect
+     */
     #[DataProvider('provider_request_headers')]
-    public function test_it_can_receive_incoming_headers($send_headers, $expect): void
+    public function testItCanReceiveIncomingHeaders(array $send_headers, array $expect): void
     {
         $response = $this->guzzle->get(self::$handler_url, ['headers' => [
-            'User-Agent' => __CLASS__,
-            ...$send_headers
+            'User-Agent' => self::class,
+            ...$send_headers,
         ]]);
         $received_payload = JSON::decodeArray($response->getBody()->getContents());
         $this->assertSame($expect, $received_payload['headers']);
     }
 
-    public function test_it_can_detect_incoming_urls_when_rewriting()
+    public function testItCanDetectIncomingUrlsWhenRewriting(): void
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     return new Response(
@@ -186,5 +204,4 @@ class RequestParsingTest extends BaseBlackboxTestCase
             $this->guzzle->get($handler_url),
         );
     }
-
 }

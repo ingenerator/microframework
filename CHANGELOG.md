@@ -1,6 +1,10 @@
 
 ### Unreleased
 
+* [BREAKING]: Handler factory functions now take HandlerFactoryArgs instead of LoggerInterface, this allows us to 
+  also pass the request, to allow for simple routing to different handlers.
+* [BREAKING]: Added strict types and array shapes throughout.
+* [BREAKING]: FactoryFunction::call() no longer accepts or passes arguments to the callable.
 * [Internal] Bump dev dependencies
 * Require PHP 8.5
 * Require ingenerator/php-utils version 3
