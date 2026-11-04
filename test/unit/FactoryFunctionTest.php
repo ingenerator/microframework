@@ -43,7 +43,7 @@ class FactoryFunctionTest extends TestCase
     {
         $fn = fn () => new stdClass();
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Factory for DateTimeImmutable incorrectly returned stdClass');
+        $this->expectExceptionMessageIsOrContains('Factory for DateTimeImmutable incorrectly returned stdClass');
         FactoryFunction::call($fn, DateTimeImmutable::class);
     }
 
