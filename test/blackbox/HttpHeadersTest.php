@@ -13,7 +13,7 @@ class HttpHeadersTest extends BaseBlackboxTestCase
     {
         parent::setUpBeforeClass();
         self::$handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
-            <<<'PHP'
+            <<<'PHP_WRAP'
             fn (LoggerInterface $logger) => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
@@ -21,7 +21,7 @@ class HttpHeadersTest extends BaseBlackboxTestCase
                     return new Response(202, headers: $body, body: 'Headers from POST');
                 }
             }
-            PHP,
+            PHP_WRAP,
         );
     }
 

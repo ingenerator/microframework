@@ -11,7 +11,7 @@ $start_time = hrtime(as_number: true);
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-(new MicroFramework())->execute(
+new MicroFramework()->execute(
     logger_provider_factory: fn () => new DefaultStackdriverLoggerProvider(
         service_name: 'ig-micro',
         version_file_path: __DIR__.'/../version.php',

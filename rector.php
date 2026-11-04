@@ -11,4 +11,5 @@ return RectorConfig::configure()
     ->withRootFiles()
     ->withSkipPath(__DIR__.'/test/blackbox/implementation/htdocs/dynamic')
     ->withComposerBased(phpunit: true)
+    ->withPhpSets()
     ->withImportNames();

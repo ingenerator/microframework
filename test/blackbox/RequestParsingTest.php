@@ -125,7 +125,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
                 [],
                 [
                     'Host' => ['test_subject'],
-                    'User-Agent' => [__CLASS__],
+                    'User-Agent' => [self::class],
                 ],
             ],
             'with custom headers' => [
@@ -145,7 +145,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
                 ],
                 [
                     'Host' => ['test_subject'],
-                    'User-Agent' => [__CLASS__],
+                    'User-Agent' => [self::class],
                     'X-My-Header' => ['test1, test2'],
                 ],
             ],
@@ -156,7 +156,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
     public function testItCanReceiveIncomingHeaders($send_headers, $expect): void
     {
         $response = $this->guzzle->get(self::$handler_url, ['headers' => [
-            'User-Agent' => __CLASS__,
+            'User-Agent' => self::class,
             ...$send_headers,
         ]]);
         $received_payload = JSON::decodeArray($response->getBody()->getContents());
