@@ -9,7 +9,7 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    name: Run tests
+    name: Run tests (guzzle/psr7 ${{matrix.guzzle-psr-version}})
     strategy:
       fail-fast: false
       matrix:
