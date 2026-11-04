@@ -71,8 +71,8 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($request_log_msg['logging.googleapis.com/trace']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertIsFloat($request_log_msg['context']['mem_mb']);
-        $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
+        $this->assertIsNumeric($request_log_msg['context']['mem_mb']);
+        $this->assertSame(2.0, round((float) $request_log_msg['context']['mem_mb']));
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(
@@ -177,8 +177,8 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($request_log_msg['httpRequest']['latency']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertIsFloat($request_log_msg['context']['mem_mb']);
-        $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
+        $this->assertIsNumeric($request_log_msg['context']['mem_mb']);
+        $this->assertSame(2.0, round((float) $request_log_msg['context']['mem_mb']));
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(
@@ -338,8 +338,8 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
         unset($request_log_msg['httpRequest']['latency']);
 
         // Currently the test handler is taking around 2.1Mb, just assert it's close to that
-        $this->assertIsFloat($request_log_msg['context']['mem_mb']);
-        $this->assertSame(2.0, round($request_log_msg['context']['mem_mb']));
+        $this->assertIsNumeric($request_log_msg['context']['mem_mb']);
+        $this->assertSame(2.0, round((float) $request_log_msg['context']['mem_mb']));
         unset($request_log_msg['context']['mem_mb']);
 
         $this->assertSame(
