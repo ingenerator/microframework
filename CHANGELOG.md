@@ -1,6 +1,8 @@
 
 ### Unreleased
 
+* Support Guzzle PSR-7 3.x (as well as 2.x)
+
 ### v1.2.0 (2025-07-23)
 
 * Require PHP 8.4

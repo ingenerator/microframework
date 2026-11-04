@@ -10,6 +10,11 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     name: Run tests
+    strategy:
+      fail-fast: false
+      matrix:
+        guzzle-psr-version: ['^2', '^3']
+
     steps:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -23,7 +28,7 @@ jobs:
         show-progress: false
 
     - name: Composer install
-      uses: ingenerator/github-composite-actions/cached-composer-install@v1
+      run: composer update --with "guzzlehttp/psr7:${{ matrix.guzzle-psr-version }}"
 
     - name: Run unit tests
       run: |
