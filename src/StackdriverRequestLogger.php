@@ -34,7 +34,7 @@ class StackdriverRequestLogger implements RequestLogger
         $elapsed_nanos = $this->getHrTime() - $start_hr_time;
         $request_start_time = $this->getMicrotime() - ($elapsed_nanos / 1_000_000_000);
 
-        $logger->logRequest($_SERVER, $request_start_time);
+        $logger->logRequest(request_start_time: $request_start_time);
     }
 
     protected function getHrTime(): int|float

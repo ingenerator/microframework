@@ -5,7 +5,7 @@
   "type": "library",
   "require": {
     "php": "~8.4.0",
-    "ingenerator/php-utils": "^2.0",
+    "ingenerator/php-utils": "^3.0",
     "guzzlehttp/psr7": "^2.7 | ^3.2"
   },
   "require-dev": {

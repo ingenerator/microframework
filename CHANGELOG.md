@@ -1,6 +1,7 @@
 
 ### Unreleased
 
+* Require ingenerator/php-utils version 3
 * Support Guzzle PSR-7 3.x (as well as 2.x)
 
 ### v1.2.0 (2025-07-23)
