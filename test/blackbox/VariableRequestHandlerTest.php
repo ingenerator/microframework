@@ -33,8 +33,8 @@ final class VariableRequestHandlerTest extends BaseBlackboxTestCase
         );
     }
 
-    #[TestWith(['post', 201, 'You made a new thing'])]
-    #[TestWith(['get', 200, 'You got a thing'])]
+    #[TestWith(['POST', 201, 'You made a new thing'])]
+    #[TestWith(['GET', 200, 'You got a thing'])]
     public function testItPassesRequestToHandlerFactoryForRouting(string $method, int $expectedStatus, string $expectedBody): void
     {
         $this->assertResponseMatches($expectedStatus, $expectedBody, $this->guzzle->request($method, self::$handler_url));
