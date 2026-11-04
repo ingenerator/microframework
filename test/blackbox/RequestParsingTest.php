@@ -128,7 +128,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
     }
 
     /**
-     * @return array<string, array{array<string,string|list<string>>, array<string,list<string>>}>
+     * @return array<string, array{array<string, string|non-empty-array<string>>, array<string, list<string>>}>
      */
     public static function provider_request_headers(): array
     {
@@ -165,7 +165,7 @@ class RequestParsingTest extends BaseBlackboxTestCase
     }
 
     /**
-     * @param array<string, string|list<string>> $send_headers
+     * @param array<string, string|non-empty-array<string>> $send_headers
      * @param array<string, list<string>> $expect
      */
     #[DataProvider('provider_request_headers')]

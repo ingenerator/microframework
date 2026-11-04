@@ -4,9 +4,9 @@ namespace test\blackbox;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use UnexpectedValueException;
 
@@ -40,7 +40,12 @@ class BaseBlackboxTestCase extends TestCase
     private function getTestSubjectBaseUrl(): string
     {
         $subject_url = getenv('TEST_SUBJECT_BASE_URI');
-        Assert::assertNotEmpty($subject_url, 'Expect an environment variable TEST_SUBJECT_BASE_URI');
+        if (!is_string($subject_url)) {
+            throw new RuntimeException('Expect an environment variable TEST_SUBJECT_BASE_URI as a string');
+        }
+        if (empty($subject_url)) {
+            throw new RuntimeException('Expect an environment variable TEST_SUBJECT_BASE_URI not to be empty string');
+        }
 
         return $subject_url;
     }
@@ -70,9 +75,14 @@ class BaseBlackboxTestCase extends TestCase
         // Each line in the file is in syslog RFC3164 format. The details of the message header not relevant to us, we
         // are only using syslog format to be able to capture the underlying container STDOUT/STDERR in a docker compose
         // environment. So we just split the lines on the end of the HEADER and return the CONTENT
+        $lines = file(self::$test_subject_logs_file, FILE_IGNORE_NEW_LINES);
+        if ($lines === false) {
+            throw new RuntimeException('Could not read '.self::$test_subject_logs_file);
+        }
+
         return array_map(
             self::extractSyslogRFC3164MessageBody(...),
-            file(self::$test_subject_logs_file, FILE_IGNORE_NEW_LINES),
+            $lines,
         );
     }
 
@@ -140,5 +150,15 @@ class BaseBlackboxTestCase extends TestCase
         self::$filesystem->dumpFile($file_path.'/index.php', $code);
 
         return '/dynamic/'.$id.'/';
+    }
+
+    final protected function getLocalIp(): string
+    {
+        $hostname = gethostname();
+        if ($hostname === false) {
+            throw new RuntimeException('Could not get hostname');
+        }
+
+        return gethostbyname($hostname);
     }
 }

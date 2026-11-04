@@ -76,7 +76,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                 'httpRequest' => [
                     'requestMethod' => 'GET',
                     'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                    'remoteIp' => gethostbyname(gethostname()),
+                    'remoteIp' => $this->getLocalIp(),
                     'status' => 203,
                     'userAgent' => 'My Test UA',
                     // 'latency' => '0.002811s',
@@ -181,7 +181,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'httpRequest' => [
                         'requestMethod' => 'POST',
                         'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                        'remoteIp' => gethostbyname(gethostname()),
+                        'remoteIp' => $this->getLocalIp(),
                     ],
                     'reportLocation' => [
                         'filePath' => '/var/www/vendor/ingenerator/microframework/src/MicroFramework.php',
@@ -226,7 +226,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                 'httpRequest' => [
                     'requestMethod' => 'POST',
                     'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                    'remoteIp' => gethostbyname(gethostname()),
+                    'remoteIp' => $this->getLocalIp(),
                     'status' => 500,
                     'userAgent' => 'My Test UA',
                     // 'latency' => '0.002811s',
@@ -334,7 +334,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'httpRequest' => [
                         'requestMethod' => 'POST',
                         'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                        'remoteIp' => gethostbyname(gethostname()),
+                        'remoteIp' => $this->getLocalIp(),
                     ],
                 ],
                 // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
@@ -357,7 +357,7 @@ class StackdriverLoggingTest extends BaseBlackboxTestCase
                 'httpRequest' => [
                     'requestMethod' => 'POST',
                     'requestUrl' => parse_url($handler_url, PHP_URL_PATH),
-                    'remoteIp' => gethostbyname(gethostname()),
+                    'remoteIp' => $this->getLocalIp(),
                     'status' => 200,
                     'userAgent' => 'My Test UA',
                     // 'latency' => '0.002811s',
