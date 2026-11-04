@@ -29,6 +29,9 @@ project alongside code that uses a different framework).
 ```php
 <?php
 // index.php
+use \Psr\Http\Message\ServerRequestInterface;
+use \Psr\Log\LoggerInterface;
+
 require_once(__DIR__.'/../vendor/autoload.php');
 
 // *NO CODE HERE*
@@ -60,13 +63,14 @@ require_once(__DIR__.'/../vendor/autoload.php');
     //   requires.
     //
     // The only service / dependency that microframework provides to your code is the Logger - this is passed to
-    // your factory function for you to use as required.
-    handler_factory: fn(\Psr\Log\LoggerInterface $logger) => new class implements Ingenerator\MicroFramework\RequestHandler {
+    // your factory function for you to use as required. The HandlerFactoryArgs class also provides the request,
+    // to allow you to return different handlers based on the request (e.g. for simple routing).
+    handler_factory: fn(Ingenerator\MicroFramework\HandlerFactoryArgs $args) => new class($args->logger) implements Ingenerator\MicroFramework\RequestHandler {
         
         // If you wish to write log entries from your own code, capture the logger as a constructor argument.
         public function __construct(private readonly $logger) {}
         
-        public function handle(\Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface {
+        public function handle(ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface {
             // Do whatever you want with the request here.
             // Microframework does not provide any routing - if you need to handle different requests with different
             // code, it is up to you to dispatch them appropriately.           

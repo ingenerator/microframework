@@ -26,7 +26,7 @@ final class ErrorHandlingTest extends BaseBlackboxTestCase
         ];
         yield 'factory does not return a handler instance' => [
             <<<'PHP'
-                fn (LoggerInterface $logger) => new class extends stdClass {
+                fn () => new class extends stdClass {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         return new Response(200, body: 'Should not get here, it is the wrong instance type');
@@ -36,12 +36,12 @@ final class ErrorHandlingTest extends BaseBlackboxTestCase
         ];
         yield 'factory references undefined class' => [
             <<<'PHP'
-                fn (LoggerInterface $logger) => new \My\Undefined\RequestHandlerClass()
+                fn () => new \My\Undefined\RequestHandlerClass()
                 PHP,
         ];
         yield 'uncaught exception during handler' => [
             <<<'PHP'
-                fn (LoggerInterface $logger) => new class implements RequestHandler {
+                fn () => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         throw new \RuntimeException('You broke it');
@@ -51,7 +51,7 @@ final class ErrorHandlingTest extends BaseBlackboxTestCase
         ];
         yield 'php error in handler' => [
             <<<'PHP'
-                fn (LoggerInterface $logger) => new class implements RequestHandler {
+                fn () => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         $map = ['no' => 'thing'];
@@ -62,7 +62,7 @@ final class ErrorHandlingTest extends BaseBlackboxTestCase
         ];
         yield 'TypeError in handler' => [
             <<<'PHP'
-                fn (LoggerInterface $logger) => new class implements RequestHandler {
+                fn () => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         return $this->doThings($request);

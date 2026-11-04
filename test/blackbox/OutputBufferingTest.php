@@ -50,7 +50,7 @@ final class OutputBufferingTest extends BaseBlackboxTestCase
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     echo "You did something";
@@ -71,7 +71,7 @@ final class OutputBufferingTest extends BaseBlackboxTestCase
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     ob_start();
@@ -93,7 +93,7 @@ final class OutputBufferingTest extends BaseBlackboxTestCase
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     ob_start();
@@ -116,7 +116,7 @@ final class OutputBufferingTest extends BaseBlackboxTestCase
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     ob_start();
@@ -138,7 +138,7 @@ final class OutputBufferingTest extends BaseBlackboxTestCase
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     ob_start();

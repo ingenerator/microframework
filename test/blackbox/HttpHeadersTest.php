@@ -17,7 +17,7 @@ final class HttpHeadersTest extends BaseBlackboxTestCase
         parent::setUpBeforeClass();
         self::$handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP_WRAP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     $body = \Ingenerator\PHPUtils\StringEncoding\JSON::decodeArray($request->getBody()->getContents());

@@ -121,6 +121,7 @@ class BaseBlackboxTestCase extends TestCase
             <?php
             use GuzzleHttp\Psr7\Response;
             use Ingenerator\MicroFramework\DefaultStackdriverLoggerProvider;
+            use Ingenerator\MicroFramework\HandlerFactoryArgs;
             use Ingenerator\MicroFramework\MicroFramework;
             use Ingenerator\MicroFramework\RequestHandler;
             use Psr\Http\Message\ResponseInterface;

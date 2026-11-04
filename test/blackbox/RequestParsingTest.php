@@ -19,7 +19,7 @@ final class RequestParsingTest extends BaseBlackboxTestCase
         parent::setUpBeforeClass();
         self::$handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     return new Response(
@@ -186,7 +186,7 @@ final class RequestParsingTest extends BaseBlackboxTestCase
     {
         $handler_url = self::provisionDynamicHandlerFactoryWithDefaultBootstrap(
             <<<'PHP'
-            fn (LoggerInterface $logger) => new class implements RequestHandler {
+            fn () => new class implements RequestHandler {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
                     return new Response(

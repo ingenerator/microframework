@@ -23,7 +23,6 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
             use Ingenerator\MicroFramework\RequestHandler;
             use Psr\Http\Message\ResponseInterface;
             use Psr\Http\Message\ServerRequestInterface;
-            use Psr\Log\LoggerInterface;
 
             require_once('/var/www/vendor/autoload.php');
 
@@ -37,7 +36,7 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
                     service_name: 'my-service',
                     version_file_path: $version_file_path,
                 ),
-                handler_factory: fn (LoggerInterface $logger) => new class implements RequestHandler {
+                handler_factory: fn () => new class implements RequestHandler {
                     public function handle(ServerRequestInterface $request): ResponseInterface
                     {
                         return new Response(203, body: 'OK');
@@ -113,7 +112,6 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
             use Ingenerator\MicroFramework\RequestHandler;
             use Psr\Http\Message\ResponseInterface;
             use Psr\Http\Message\ServerRequestInterface;
-            use Psr\Log\LoggerInterface;
 
             require_once('/var/www/vendor/autoload.php');
             // Note: defining this as a named class to make log output assertions easier to follow (anonymous classes
@@ -131,7 +129,7 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
                     service_name: 'my-service',
                     version_file_path: '/var/www/version.php',
                 ),
-                handler_factory: fn (LoggerInterface $logger) => new MyHandler($logger),
+                handler_factory: fn () => new MyHandler(),
             );
             PHP,
         );
@@ -184,7 +182,7 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
         $this->assertSame(
             [
                 'severity' => 'EMERGENCY',
-                'message' => 'Uncaught RuntimeException: I broke at /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php:/var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php',
+                'message' => 'Uncaught RuntimeException: I broke at /var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php:/var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php',
                 '@ingenType' => 'app',
                 'serviceContext' => [
                     'service' => 'my-service',
@@ -199,7 +197,7 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
                     ],
                     'reportLocation' => [
                         'filePath' => '/var/www/vendor/ingenerator/microframework/src/MicroFramework.php',
-                        'lineNumber' => 152,
+                        'lineNumber' => 166,
                         'functionName' => 'Ingenerator\MicroFramework\MicroFramework->logUncaughtException',
                     ],
                 ],
@@ -208,25 +206,25 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
                     'class' => 'RuntimeException',
                     'msg' => 'I broke',
                     'code' => 0,
-                    'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php',
-                    'line' => 17,
+                    'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php',
+                    'line' => 16,
                     'trace' => <<<'TEXT'
-                        #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(81): MyHandler->handle()
-                        #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php(21): Ingenerator\MicroFramework\MicroFramework->execute()
+                        #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(82): MyHandler->handle()
+                        #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php(20): Ingenerator\MicroFramework\MicroFramework->execute()
                         #2 {main}
                         TEXT,
                 ],
                 'logging.googleapis.com/sourceLocation' => [
                     'file' => '/var/www/vendor/ingenerator/microframework/src/MicroFramework.php',
-                    'line' => 152,
+                    'line' => 166,
                     'function' => 'Ingenerator\MicroFramework\MicroFramework->logUncaughtException',
                 ],
                 '@type' => 'type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent',
                 'stack_trace' => <<<'TEXT'
-                    PHP Warning: RuntimeException: I broke in /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php:17
+                    PHP Warning: RuntimeException: I broke in /var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php:16
                     Stack trace:
-                    #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(81): MyHandler->handle()
-                    #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_54a57cd69e4889f9c6cfdde12f4607f1461dec3e/index.php(21): Ingenerator\MicroFramework\MicroFramework->execute()
+                    #0 /var/www/vendor/ingenerator/microframework/src/MicroFramework.php(82): MyHandler->handle()
+                    #1 /var/www/htdocs/dynamic/StackdriverLoggingTest_2e73de2f8da6828bd4b6026ac94ec76b0432a401/index.php(20): Ingenerator\MicroFramework\MicroFramework->execute()
                     #2 {main}
                     TEXT,
             ],
@@ -266,6 +264,7 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
             <?php
             use GuzzleHttp\Psr7\Response;
             use Ingenerator\MicroFramework\DefaultStackdriverLoggerProvider;
+            use Ingenerator\MicroFramework\HandlerFactoryArgs;
             use Ingenerator\MicroFramework\MicroFramework;
             use Ingenerator\MicroFramework\RequestHandler;
             use Psr\Http\Message\ResponseInterface;
@@ -291,7 +290,7 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
                     service_name: 'my-service',
                     version_file_path: '/var/www/version.php',
                 ),
-                handler_factory: fn (LoggerInterface $logger) => new MyHandler($logger),
+                handler_factory: fn (HandlerFactoryArgs $args) => new MyHandler($args->logger),
             );
             PHP,
         );
@@ -360,8 +359,8 @@ final class StackdriverLoggingTest extends BaseBlackboxTestCase
                 ],
                 // 'logging.googleapis.com/trace' => '66991537308e16.07573263',
                 'logging.googleapis.com/sourceLocation' => [
-                    'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_0ba32a129fbc45c0d394a95f76d7bdf405c84692/index.php',
-                    'line' => 18,
+                    'file' => '/var/www/htdocs/dynamic/StackdriverLoggingTest_b6ab65fbb5280907f86e2517cfa96312e743341d/index.php',
+                    'line' => 19,
                     'function' => 'MyHandler->handle',
                 ],
                 'custom_context' => [

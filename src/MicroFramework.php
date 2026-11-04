@@ -45,7 +45,7 @@ class MicroFramework
      * Executes a request.
      *
      * @param callable():LoggerProvider $logger_provider_factory function that returns a LoggerProvider to get/create a suitable logger
-     * @param callable(LoggerInterface $logger):RequestHandler $handler_factory function that returns a class containing the application code
+     * @param callable(HandlerFactoryArgs $args):RequestHandler $handler_factory function that returns a class containing the application code
      * @param callable():ServerRequestInterface|null $request_factory callable that provides a ServerRequest - defaults to guzzle/psr7's ServerRequest::fromGlobals()
      * @param int|float|null $start_hr_time the hrtime() at the start of the request - ideally captured as the very first thing in index.php. Used for logging latency
      * @param string $default_timezone default timezone to set before execution
@@ -77,7 +77,8 @@ class MicroFramework
                 : ServerRequest::fromGlobals();
 
             // Hand off to the application for execution
-            $response = FactoryFunction::call(fn () => $handler_factory($logger), RequestHandler::class)
+            $response = $this
+                ->createRequestHandler($handler_factory, $logger, $request)
                 ->handle($request);
 
             // Render the application result
@@ -100,6 +101,19 @@ class MicroFramework
                 $logger_provider->getRequestLogger()->logRequest($logger, $start_hr_time);
             }
         }
+    }
+
+    /**
+     * @param callable(HandlerFactoryArgs $args):RequestHandler $handler_factory
+     */
+    private function createRequestHandler(callable $handler_factory, LoggerInterface $logger, ServerRequestInterface $request): RequestHandler
+    {
+        $args = new HandlerFactoryArgs(
+            logger: $logger,
+            request: $request
+        );
+
+        return FactoryFunction::call(fn () => $handler_factory($args), RequestHandler::class);
     }
 
     private function resetOutputBuffersAssertingNoOutput(): void
