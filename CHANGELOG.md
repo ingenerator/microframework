@@ -1,6 +1,10 @@
 
 ### Unreleased
 
+* Add ResponseFactory helper class for creating simple response objects.
+* Add HealthOKHandler for returning a simple 200 OK response to a GET, and NotFoundHandler to return a plain-text
+  404 response.
+* Add RequestMethodGuardTrait that handlers can use to ensure that the incoming request is an allowed method, returns 405 if not.
 * [BREAKING]: Handler factory functions now take HandlerFactoryArgs instead of LoggerInterface, this allows us to 
   also pass the request, to allow for simple routing to different handlers.
 * [BREAKING]: Added strict types and array shapes throughout.
