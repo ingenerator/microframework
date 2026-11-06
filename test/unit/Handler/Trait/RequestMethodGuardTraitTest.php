@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace test\unit\Handler\Trait;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Ingenerator\MicroFramework\Const\RequestMethod;
 use Ingenerator\MicroFramework\Handler\Trait\RequestMethodGuardTrait;
 use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use test\unit\AssertResponse;
 
 final class RequestMethodGuardTraitTest extends TestCase
@@ -35,7 +35,7 @@ final class RequestMethodGuardTraitTest extends TestCase
     public function testItReturnsNullWhenMethodMatchesAllowedMethod(string $requestMethod, array $allowedMethods): void
     {
         $subject = $this->newSubject();
-        $request = new ServerRequest($requestMethod, '/');
+        $request = $this->newRequest($requestMethod);
 
         $this->assertNull($subject->guardRequestMethod($request, ...$allowedMethods));
     }
@@ -63,7 +63,7 @@ final class RequestMethodGuardTraitTest extends TestCase
         array $allowedMethods,
         string $expectAllowHeader,
     ): void {
-        $request = new ServerRequest($requestMethod, '/');
+        $request = $this->newRequest($requestMethod);
 
         $response = $this->newSubject()->guardRequestMethod($request, ...$allowedMethods);
 
@@ -74,6 +74,14 @@ final class RequestMethodGuardTraitTest extends TestCase
             ['Content-Type' => ['text/plain'], 'Allow' => [$expectAllowHeader]],
             $response,
         );
+    }
+
+    private function newRequest(string $method): ServerRequestInterface
+    {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getMethod')->willReturn($method);
+
+        return $request;
     }
 
     private function newSubject(): RequestMethodGuardTestSubject
